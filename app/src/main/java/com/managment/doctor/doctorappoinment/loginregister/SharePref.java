@@ -3,6 +3,8 @@ package com.managment.doctor.doctorappoinment.loginregister;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.managment.doctor.doctorappoinment.loginregister.activities.LoginActivity;
+
 public class SharePref 
 {
 
@@ -20,15 +22,13 @@ public class SharePref
         return mSharedPreferenceHelper;
     }
 
+    public String getSharedPreferenceString( String key, String defValue) {
+        return settings.getString(key, defValue);
+    }
 
-    public void setSharedPreferenceInt(Context context, String key, String value) {
+    public void setSharedPreferenceString(String key, String value) {
         SharedPreferences.Editor editor = settings.edit();
         editor.putString(key, value);
         editor.apply();
     }
-
-    public String getSharedPreferenceString(Context context, String key, String defValue) {
-        return settings.getString(key, defValue);
-    }
-
 }

@@ -11,8 +11,11 @@ import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatTextView;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.managment.doctor.doctorappoinment.R;
+import com.managment.doctor.doctorappoinment.doc.DashBoard;
+import com.managment.doctor.doctorappoinment.loginregister.SharePref;
 import com.managment.doctor.doctorappoinment.loginregister.helpers.InputValidation;
 import com.managment.doctor.doctorappoinment.loginregister.sql.DatabaseHelper;
 
@@ -40,6 +43,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        if (!SharePref.getInstance(this).getSharedPreferenceString("email","").isEmpty()) {
+            startActivity(new Intent(this, DashBoard.class));
+            finish();
+        }
         initViews();
         initListeners();
         initObjects();
@@ -112,21 +119,20 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if (databaseHelper.checkUser(textInputEditTextEmail.getText().toString().trim(), textInputEditTextPassword.getText().toString().trim())) {
 
 
-            Intent accountsIntent = new Intent(activity, UsersListActivity.class);
-            accountsIntent.putExtra("EMAIL", textInputEditTextEmail.getText().toString().trim());
+            SharePref.getInstance(this).setSharedPreferenceString("email",textInputEditTextEmail.getText().toString().trim());
+
+            Intent accountsIntent = new Intent(activity, DashBoard.class);
             emptyInputEditText();
             startActivity(accountsIntent);
+            finish();
 
 
         } else {
             // Snack Bar to show success message that record is wrong
-            Snackbar.make(nestedScrollView, getString(R.string.error_valid_email_password), Snackbar.LENGTH_LONG).show();
+            Toast.makeText(activity, getString(R.string.error_valid_email_password), Toast.LENGTH_SHORT).show();
         }
     }
 
-    /**
-     * This method is to empty all input edit text
-     */
     private void emptyInputEditText() {
         textInputEditTextEmail.setText(null);
         textInputEditTextPassword.setText(null);

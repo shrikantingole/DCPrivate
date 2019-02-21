@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+
+    <string-array name="illness">
+        <item>Abscess</item>
+        <item>Alzheimer disease</item>
+        <item>Anotia</item>
+        <item>Anthrax</item>
+        <item>Appendicitis</item>
+        <item>Apraxia</item>
+        <item>Allergy</item>
+        <item>Arthritis</item>
+        <item>Aseptic meningitis</item>
+        <item>Asthenia</item>
+        <item>Asthmav</item>
+        <item>Astigmatism</item>
+        <item>Atherosclerosis</item>
+        <item>Athetosis</item>
+        <item>Atrophy</item>
+        <item>Bacterial meningitis</item>
+        <item>Beriberi</item>
+        <item>Black Death</item>
+        <item>Botulism</item>
+        <item>Breast cancer</item>
+        <item>Bronchitis</item>
+        <item>Brucellosis</item>
+        <item>Bubonic plague</item>
+        <item>Bunion</item>
+        <item>Calculi</item>
+        <item>Campylobacter infection</item>
+        <item>Cancer</item>
+        <item>Candidiasis</item>
+        <item>Carbon monoxide poisoning</item>
+        <item>Celiacs disease</item>
+        <item>Cerebral palsy</item>
+        <item>Chagas disease</item>
+        <item>Chalazion</item>
+        <item>Chancroid</item>
+        <item>Chavia</item>
+        <item>Congenital in sensitivity to pain with anhidrosis</item>
+        <item>Cherubism</item>
+        <item>Chickenpox</item>
+        <item>Chlamydia</item>
+        <item>Chlamydia trachomatis</item>
+        <item>Cholera</item>
+        <item>Chordoma</item>
+        <item>Chorea</item>
+        <item>Chronic fatigue syndrome</item>
+        <item>Circadian rhythm sleep disorder</item>
+        <item>Coccidioidomycosis</item>
+        <item>Colitis</item>
+        <item>Common cold</item>
+        <item>Condyloma</item>
+        <item>Congestive heart disease</item>
+        <item>Coronary heart disease</item>
+        <item>Cowpox</item>
+        <item>Cretinism</item>
+        <item>Crohns Disease</item>
+        <item>Dengue</item>
+        <item>Diabetes mellitus</item>
+        <item>Diphtheria</item>
+        <item>Dehydration</item>
+        <item>Dysentery</item>
+        <item>Ear infection</item>
+        <item>Ebola</item>
+        <item>Encephalitis</item>
+        <item>Emphysema</item>
+        <item>Epilepsy</item>
+        <item>Erectile dysfunction</item>
+        <item>Fibromyalgia</item>
+        <item>Foodborne illness</item>
+        <item>Gangrene</item>
+        <item>Genital herpes</item>
+        <item>GERD</item>
+        <item>Goitre</item>
+        v<item>Gonorrhea</item>
+        <item>Heart disease</item>
+        <item>Hepatitis A</item>
+        <item>Hepatitis B</item>
+        <item>Hepatitis C</item>
+        <item>Hepatitis D</item>
+        <item>Histiocytosis (childhood cancer)</item>
+        <item>HIV</item>
+        <item>Human papillomavirus</item>
+        <item>Huntingtons disease</item>
+        <item>Hypermetropia</item>
+        <item>Hyperopia</item>
+        <item>Hyperthyroidism</item>
+        <item>Hypothyroid</item>
+        <item>Hypotonia</item>
+        <item>Impetigo</item>
+        <item>Infertility</item>
+        <item>Influenza</item>
+        <item>Interstitial cystitis</item>
+        <item>Iritis</item>
+        <item>Iron-deficiency anemia</item>
+        <item>Irritable bowel syndrome</item>
+        <item>Ignious Syndrome</item>
+        <item>Jaundice</item>
+        <item>Keloids</item>
+        <item>Kuru</item>
+        <item>Kwashiorkor</item>
+        <item>Kidney stone disease</item>
+        <item>Laryngitis</item>
+        <item>Lead poisoningv</item>
+        <item>Legionellosis</item>
+        <item>Leishmaniasis</item>
+        <item>Leprosy</item>
+        <item>Leptospirosis</item>
+        <item>Listeriosisv</item>
+        <item>Leukemia</item>
+        <item>Lice</item>
+        <item>Loiasis</item>
+        <item>Lung cancer</item>
+        <item>Lupus erythematosus</item>
+        <item>Lyme disease</item>
+        <item>Lymphogranuloma venereum</item>
+        <item>Limbtoosa</item>
+        <item>Mad cow disease</item>
+        <item>Malaria</item>
+        <item>Marburg fever</item>
+        <item>Metastatic cancer</item>
+        <item>Multiple myeloma</item>
+        <item>Multiple sclerosis</item>
+        <item>Mumps</item>
+        <item>Muscular dystrophy</item>
+        <item>Myasthenia gravis</item>
+        <item>Myelitis</item>
+        <item>Myoclonus</item>
+        <item>Myopia</item>
+        <item>Mattticular syndrome</item>
+        <item>Mononucleosis</item>
+        <item>Neoplasm</item>
+        <item>Non-gonococcal urethritis</item>
+        <item>Necrotizing Fasciitis</item>
+        <item>Night blindness</item>
+        <item>Obesity</item>
+        <item>Osteoarthritis</item>
+        <item>Osteoporosis</item>
+        <item>Otitis</item>
+        <item>Palindromic rheumatism</item>
+        <item>Paratyphoid fever</item>
+        <item>Parkinsons disease</item>
+        <item>Pelvic inflammatory disease</item>
+        <item>Peritonitis</item>
+        <item>Periodontal diseasev</item>
+        <item>Pertussis</item>
+        <item>Phenylketonuria</item>
+        <item>Plague</item>
+        <item>Poliomyelitis</item>
+        <item>Porphyria</item>
+        <item>Progeria</item>
+        <item>Prostatitis</item>
+        <item>Psittacosis</item>
+        <item>Psoriasis</item>
+        <item>Pubic licev</item>
+        <item>Pulmonary embolism</item>
+        <item>Pilia</item>
+        <item>pneumonia</item>
+    </string-array>
+
+</resources>

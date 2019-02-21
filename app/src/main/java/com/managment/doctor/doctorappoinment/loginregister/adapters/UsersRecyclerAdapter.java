@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 
 
 import com.managment.doctor.doctorappoinment.R;
-import com.managment.doctor.doctorappoinment.loginregister.model.User;
+import com.managment.doctor.doctorappoinment.loginregister.model.Doctor;
 
 import java.util.List;
 
@@ -19,10 +19,10 @@ import java.util.List;
 
 public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdapter.UserViewHolder> {
 
-    private List<User> listUsers;
+    private List<Doctor> listDoctors;
 
-    public UsersRecyclerAdapter(List<User> listUsers) {
-        this.listUsers = listUsers;
+    public UsersRecyclerAdapter(List<Doctor> listDoctors) {
+        this.listDoctors = listDoctors;
     }
 
     @Override
@@ -36,15 +36,15 @@ public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdap
 
     @Override
     public void onBindViewHolder(UserViewHolder holder, int position) {
-        holder.textViewName.setText(listUsers.get(position).getName());
-        holder.textViewEmail.setText(listUsers.get(position).getEmail());
-        holder.textViewPassword.setText(listUsers.get(position).getPassword());
+        holder.textViewName.setText(listDoctors.get(position).getName());
+        holder.textViewEmail.setText(listDoctors.get(position).getEmail());
+        holder.textViewPassword.setText(listDoctors.get(position).getPassword());
     }
 
     @Override
     public int getItemCount() {
-        Log.v(UsersRecyclerAdapter.class.getSimpleName(),""+listUsers.size());
-        return listUsers.size();
+        Log.v(UsersRecyclerAdapter.class.getSimpleName(),""+ listDoctors.size());
+        return listDoctors.size();
     }
 
 

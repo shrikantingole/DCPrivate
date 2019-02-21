@@ -1,74 +1,90 @@
 package com.managment.doctor.doctorappoinment.loginregister.sql;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.Paint;
+import android.util.Log;
 
-
-import com.managment.doctor.doctorappoinment.loginregister.model.User;
+import com.managment.doctor.doctorappoinment.loginregister.model.Doctor;
+import com.managment.doctor.doctorappoinment.loginregister.model.Patient;
 
 import java.util.ArrayList;
 import java.util.List;
+import static com.managment.doctor.doctorappoinment.loginregister.model.Doctor.COLUMN_DOCTOR_EMAIL;
+import static com.managment.doctor.doctorappoinment.loginregister.model.Doctor.COLUMN_DOCTOR_ID;
+import static com.managment.doctor.doctorappoinment.loginregister.model.Doctor.COLUMN_DOCTOR_NAME;
+import static com.managment.doctor.doctorappoinment.loginregister.model.Doctor.COLUMN_DOCTOR_PASSWORD;
+import static com.managment.doctor.doctorappoinment.loginregister.model.Doctor.CREATE_DOCTOR_TABLE;
+import static com.managment.doctor.doctorappoinment.loginregister.model.Doctor.DROP_DOCTOR_TABLE;
+import static com.managment.doctor.doctorappoinment.loginregister.model.Doctor.TABLE_DOCTOR;
+import static com.managment.doctor.doctorappoinment.loginregister.model.Patient.COLUMN_PATIENT_CITY;
+import static com.managment.doctor.doctorappoinment.loginregister.model.Patient.COLUMN_PATIENT_CONTACT;
+import static com.managment.doctor.doctorappoinment.loginregister.model.Patient.COLUMN_PATIENT_DOCTOR;
+import static com.managment.doctor.doctorappoinment.loginregister.model.Patient.COLUMN_PATIENT_EMAIL;
+import static com.managment.doctor.doctorappoinment.loginregister.model.Patient.COLUMN_PATIENT_GENDER;
+import static com.managment.doctor.doctorappoinment.loginregister.model.Patient.COLUMN_PATIENT_ID;
+import static com.managment.doctor.doctorappoinment.loginregister.model.Patient.COLUMN_PATIENT_ILLNESS;
+import static com.managment.doctor.doctorappoinment.loginregister.model.Patient.COLUMN_PATIENT_NAME;
+import static com.managment.doctor.doctorappoinment.loginregister.model.Patient.COLUMN_PATIENT_OPPDATE;
+import static com.managment.doctor.doctorappoinment.loginregister.model.Patient.COLUMN_PATIENT_REGDATE;
+import static com.managment.doctor.doctorappoinment.loginregister.model.Patient.CREATE_PATIENT_TABLE;
+import static com.managment.doctor.doctorappoinment.loginregister.model.Patient.DROP_PATIENT_TABLE;
+import static com.managment.doctor.doctorappoinment.loginregister.model.Patient.TABLE_PATIENT;
+
 public class DatabaseHelper extends SQLiteOpenHelper {
+    private static DatabaseHelper databaseHelper = null;
     private static final int DATABASE_VERSION = 1;
-    private static final String DATABASE_NAME = "UserManager.db";
-    private static final String TABLE_USER = "user";
+    private static final String DOCTORDBNAME = "DoctorManager.db";
 
-    private static final String COLUMN_USER_ID = "user_id";
-    private static final String COLUMN_USER_NAME = "user_name";
-    private static final String COLUMN_USER_EMAIL = "user_email";
-    private static final String COLUMN_USER_PASSWORD = "user_password";
-
-    // create table sql query
-    private String CREATE_USER_TABLE = "CREATE TABLE " + TABLE_USER + "("
-            + COLUMN_USER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + COLUMN_USER_NAME + " TEXT,"
-            + COLUMN_USER_EMAIL + " TEXT," + COLUMN_USER_PASSWORD + " TEXT" + ")";
-
-    // drop table sql query
-    private String DROP_USER_TABLE = "DROP TABLE IF EXISTS " + TABLE_USER;
 
     public DatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        super(context, DOCTORDBNAME, null, DATABASE_VERSION);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(CREATE_USER_TABLE);
+        db.execSQL(CREATE_DOCTOR_TABLE);
+        db.execSQL(CREATE_PATIENT_TABLE);
     }
 
+    public static DatabaseHelper getInstance(Activity activity) {
+        if (databaseHelper == null) databaseHelper = new DatabaseHelper(activity);
+        return databaseHelper;
+    }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL(DROP_USER_TABLE);
+        db.execSQL(DROP_DOCTOR_TABLE);
+        db.execSQL(DROP_PATIENT_TABLE);
         onCreate(db);
 
     }
-    public void addUser(User user) {
+
+    public void addUser(Doctor doctor) {
         SQLiteDatabase db = this.getWritableDatabase();
-
         ContentValues values = new ContentValues();
-        values.put(COLUMN_USER_NAME, user.getName());
-        values.put(COLUMN_USER_EMAIL, user.getEmail());
-        values.put(COLUMN_USER_PASSWORD, user.getPassword());
-
-        // Inserting Row
-        db.insert(TABLE_USER, null, values);
+        values.put(COLUMN_DOCTOR_NAME, doctor.getName());
+        values.put(COLUMN_DOCTOR_EMAIL, doctor.getEmail());
+        values.put(COLUMN_DOCTOR_PASSWORD, doctor.getPassword());
+        db.insert(TABLE_DOCTOR, null, values);
         db.close();
     }
 
-    public List<User> getAllUser() {
+    public List<Doctor> getAllUser() {
         String[] columns = {
-                COLUMN_USER_ID,
-                COLUMN_USER_EMAIL,
-                COLUMN_USER_NAME,
-                COLUMN_USER_PASSWORD};
-        String sortOrder =COLUMN_USER_NAME + " ASC";
-        List<User> userList = new ArrayList<User>();
+                COLUMN_DOCTOR_ID,
+                COLUMN_DOCTOR_EMAIL,
+                COLUMN_DOCTOR_NAME,
+                COLUMN_DOCTOR_PASSWORD};
+        String sortOrder = COLUMN_DOCTOR_NAME + " ASC";
+        List<Doctor> doctorList = new ArrayList<Doctor>();
 
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_USER, //Table to query
+        Cursor cursor = db.query(TABLE_DOCTOR, //Table to query
                 columns,    //columns to return
                 null,        //columns for the WHERE clause
                 null,        //The values for the WHERE clause
@@ -77,47 +93,46 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 sortOrder); //The sort order
         if (cursor.moveToFirst()) {
             do {
-                User user = new User();
-                user.setId(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_USER_ID))));
-                user.setName(cursor.getString(cursor.getColumnIndex(COLUMN_USER_NAME)));
-                user.setEmail(cursor.getString(cursor.getColumnIndex(COLUMN_USER_EMAIL)));
-                user.setPassword(cursor.getString(cursor.getColumnIndex(COLUMN_USER_PASSWORD)));
-                userList.add(user);
+                Doctor doctor = new Doctor();
+                doctor.setId(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_DOCTOR_ID))));
+                doctor.setName(cursor.getString(cursor.getColumnIndex(COLUMN_DOCTOR_NAME)));
+                doctor.setEmail(cursor.getString(cursor.getColumnIndex(COLUMN_DOCTOR_EMAIL)));
+                doctor.setPassword(cursor.getString(cursor.getColumnIndex(COLUMN_DOCTOR_PASSWORD)));
+                doctorList.add(doctor);
             } while (cursor.moveToNext());
         }
         cursor.close();
         db.close();
-        return userList;
+        return doctorList;
     }
 
-    public void updateUser(User user) {
+    public void updateUser(Doctor doctor) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(COLUMN_USER_NAME, user.getName());
-        values.put(COLUMN_USER_EMAIL, user.getEmail());
-        values.put(COLUMN_USER_PASSWORD, user.getPassword());
+        values.put(COLUMN_DOCTOR_NAME, doctor.getName());
+        values.put(COLUMN_DOCTOR_EMAIL, doctor.getEmail());
+        values.put(COLUMN_DOCTOR_PASSWORD, doctor.getPassword());
 
-        // updating row
-        db.update(TABLE_USER, values, COLUMN_USER_ID + " = ?",
-                new String[]{String.valueOf(user.getId())});
+        db.update(TABLE_DOCTOR, values, COLUMN_DOCTOR_ID + " = ?",
+                new String[]{String.valueOf(doctor.getId())});
         db.close();
     }
 
-    public void deleteUser(User user) {
+    public void deleteUser(Doctor doctor) {
         SQLiteDatabase db = this.getWritableDatabase();
-        // delete user record by id
-        db.delete(TABLE_USER, COLUMN_USER_ID + " = ?",
-                new String[]{String.valueOf(user.getId())});
+        // delete doctor record by id
+        db.delete(TABLE_DOCTOR, COLUMN_DOCTOR_ID + " = ?",
+                new String[]{String.valueOf(doctor.getId())});
         db.close();
     }
 
     public boolean checkUser(String email) {
-        String[] columns = {COLUMN_USER_ID};
+        String[] columns = {COLUMN_DOCTOR_ID};
         SQLiteDatabase db = this.getReadableDatabase();
-        String selection = COLUMN_USER_EMAIL + " = ?";
+        String selection = COLUMN_DOCTOR_EMAIL + " = ?";
         String[] selectionArgs = {email};
-        Cursor cursor = db.query(TABLE_USER, //Table to query
+        Cursor cursor = db.query(TABLE_DOCTOR, //Table to query
                 columns,                    //columns to return
                 selection,                  //columns for the WHERE clause
                 selectionArgs,              //The values for the WHERE clause
@@ -134,11 +149,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public boolean checkUser(String email, String password) {
 
-        String[] columns = { COLUMN_USER_ID};
+        String[] columns = {COLUMN_DOCTOR_ID};
         SQLiteDatabase db = this.getReadableDatabase();
-        String selection = COLUMN_USER_EMAIL + " = ?" + " AND " + COLUMN_USER_PASSWORD + " = ?";
+        String selection = COLUMN_DOCTOR_EMAIL + " = ?" + " AND " + COLUMN_DOCTOR_PASSWORD + " = ?";
         String[] selectionArgs = {email, password};
-        Cursor cursor = db.query(TABLE_USER, //Table to query
+        Cursor cursor = db.query(TABLE_DOCTOR, //Table to query
                 columns,                    //columns to return
                 selection,                  //columns for the WHERE clause
                 selectionArgs,              //The values for the WHERE clause
@@ -157,25 +172,112 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return false;
     }
 
+    public Doctor getDoctorDetails(String email)
+    {
+        ArrayList<Doctor> doctorList=new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String selection = COLUMN_DOCTOR_EMAIL + " = ?";
+        String[] selectionArgs = {email};
+        Cursor cursor = db.query(TABLE_DOCTOR, //Table to query
+                null,                    //columns to return
+                selection,                  //columns for the WHERE clause
+                selectionArgs,              //The values for the WHERE clause
+                null,                       //group the rows
+                null,                      //filter by row groups
+                null);
+       doctorList=parseDoctorCursor(cursor);
+        cursor.close();
+        db.close();
 
+        return doctorList.get(0);
+    }
+    public ArrayList<Patient> getAllPatient() {
+        ArrayList<Patient> list = new ArrayList<>();
 
-//    public ArrayList<ContactModel> getAllRecords() {
-//        database = this.getReadableDatabase();
-//        Cursor cursor = database.query(TABLE_NAME, null, null, null, null, null, null);
-//        ArrayList<ContactModel> contacts = new ArrayList<ContactModel>();
-//        ContactModel contactModel;
-//        if (cursor.getCount() > 0) {
-//            for (int i = 0; i < cursor.getCount(); i++) {
-//                cursor.moveToNext();
-//                contactModel = new ContactModel();
-//                contactModel.setID(cursor.getString(0));
-//                contactModel.setFirstName(cursor.getString(1));
-//                contactModel.setLastName(cursor.getString(2));
-//                contacts.add(contactModel);
-//            }
-//        }
-//        cursor.close();
-//        database.close();
-//        return contacts;
-//    }
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_PATIENT, //Table to query
+                null,    //columns to return
+                null,        //columns for the WHERE clause
+                null,        //The values for the WHERE clause
+                null,       //group the rows
+                null,       //filter by row groups
+                null); //The sort order
+        list=parsepatientCursor(cursor);
+        cursor.close();
+        db.close();
+        return list;
+    }
+    public Patient getPatientDetails(String id)
+    {
+        ArrayList<Patient> list=new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String selection = COLUMN_PATIENT_ID + " = ?";
+        String[] selectionArgs = {id};
+        Cursor cursor = db.query(TABLE_DOCTOR, //Table to query
+                null,                    //columns to return
+                selection,                  //columns for the WHERE clause
+                selectionArgs,              //The values for the WHERE clause
+                null,                       //group the rows
+                null,                      //filter by row groups
+                null);
+        list=parsepatientCursor(cursor);
+        cursor.close();
+        db.close();
+
+        return list.get(0);
+    }
+
+    public void addPatient(Patient patient)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_PATIENT_NAME, patient.getName());
+        values.put(COLUMN_PATIENT_EMAIL, patient.getEmail());
+        values.put(COLUMN_PATIENT_CONTACT, patient.getContact());
+        values.put(COLUMN_PATIENT_CITY, patient.getCity());
+        values.put(COLUMN_PATIENT_GENDER, patient.getGender());
+        values.put(COLUMN_PATIENT_ILLNESS, patient.getIllness());
+        values.put(COLUMN_PATIENT_DOCTOR, patient.getDoctor());
+        values.put(COLUMN_PATIENT_OPPDATE, patient.getOppDate());
+        values.put(COLUMN_PATIENT_REGDATE, patient.getRegDate());
+        long id=db.insert(TABLE_PATIENT, null, values);
+        Log.d("XXXZZZXXX", "addPatient: "+id);
+        db.close();
+    }
+
+    private ArrayList<Doctor> parseDoctorCursor(Cursor cursor)
+    {
+        ArrayList<Doctor> list=new ArrayList<>();
+        if (cursor.moveToFirst()) {
+            do {
+                Doctor doctor = new Doctor();
+                doctor.setId(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_DOCTOR_ID))));
+                doctor.setName(cursor.getString(cursor.getColumnIndex(COLUMN_DOCTOR_NAME)));
+                doctor.setEmail(cursor.getString(cursor.getColumnIndex(COLUMN_DOCTOR_EMAIL)));
+                doctor.setPassword(cursor.getString(cursor.getColumnIndex(COLUMN_DOCTOR_PASSWORD)));
+                list.add(doctor);
+            } while (cursor.moveToNext());
+        }
+        return list;
+    }
+
+    private ArrayList<Patient> parsepatientCursor(Cursor cursor)
+    {
+        ArrayList<Patient> list=new ArrayList<>();
+        if (cursor.moveToFirst()) {
+            do {
+                Patient patient = new Patient();
+                patient.setId(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_PATIENT_ID))));
+                patient.setName(cursor.getString(cursor.getColumnIndex(COLUMN_PATIENT_NAME)));
+                patient.setEmail(cursor.getString(cursor.getColumnIndex(COLUMN_PATIENT_EMAIL)));
+                patient.setGender(cursor.getString(cursor.getColumnIndex(COLUMN_PATIENT_GENDER)));
+                patient.setRegDate(cursor.getString(cursor.getColumnIndex(COLUMN_PATIENT_REGDATE)));
+                patient.setCity(cursor.getString(cursor.getColumnIndex(COLUMN_PATIENT_CITY)));
+                patient.setContact(cursor.getString(cursor.getColumnIndex(COLUMN_PATIENT_CONTACT)));
+                patient.setIllness(cursor.getString(cursor.getColumnIndex(COLUMN_PATIENT_ILLNESS)));
+                list.add(patient);
+            } while (cursor.moveToNext());
+        }
+        return list;
+    }
 }

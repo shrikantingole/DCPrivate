@@ -18,7 +18,9 @@
         </activity>
         <activity android:name=".loginregister.activities.LoginActivity" />
         <activity android:name=".loginregister.activities.RegisterActivity" />
-        <activity android:name=".loginregister.activities.UsersListActivity" />
+        <activity android:name=".doc.PatientListActivity" />
+        <activity android:name=".doc.DashBoard" />
+        <activity android:name=".doc.AddPatientActivity"></activity>
     </application>
 
 </manifest>

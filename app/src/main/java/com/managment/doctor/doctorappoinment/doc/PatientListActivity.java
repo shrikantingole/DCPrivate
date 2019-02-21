@@ -1,4 +1,4 @@
-package com.managment.doctor.doctorappoinment.loginregister.activities;
+package com.managment.doctor.doctorappoinment.doc;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -8,82 +8,68 @@ import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.Toast;
 
 
 import com.managment.doctor.doctorappoinment.R;
+import com.managment.doctor.doctorappoinment.loginregister.adapters.PatientRecyclerAdapter;
 import com.managment.doctor.doctorappoinment.loginregister.adapters.UsersRecyclerAdapter;
-import com.managment.doctor.doctorappoinment.loginregister.model.User;
+import com.managment.doctor.doctorappoinment.loginregister.model.Doctor;
+import com.managment.doctor.doctorappoinment.loginregister.model.Patient;
 import com.managment.doctor.doctorappoinment.loginregister.sql.DatabaseHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.ButterKnife;
 
-public class UsersListActivity extends AppCompatActivity {
 
-    private AppCompatActivity activity = UsersListActivity.this;
+public class PatientListActivity extends AppCompatActivity {
+
+    private AppCompatActivity activity = PatientListActivity.this;
     private AppCompatTextView textViewName;
     private RecyclerView recyclerViewUsers;
-    private List<User> listUsers;
-    private UsersRecyclerAdapter usersRecyclerAdapter;
+    private ArrayList<Patient> patients=new ArrayList<>();
+    private PatientRecyclerAdapter adapter;
     private DatabaseHelper databaseHelper;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_users_list);
+        ButterKnife.bind(this);
         initViews();
         initObjects();
 
     }
 
-    /**
-     * This method is to initialize views
-     */
     private void initViews() {
         textViewName = (AppCompatTextView) findViewById(R.id.textViewName);
         recyclerViewUsers = (RecyclerView) findViewById(R.id.recyclerViewUsers);
     }
 
-    /**
-     * This method is to initialize objects to be used
-     */
     private void initObjects() {
-        listUsers = new ArrayList<>();
-        usersRecyclerAdapter = new UsersRecyclerAdapter(listUsers);
+        patients = new ArrayList<>();
+        patients=DatabaseHelper.getInstance(PatientListActivity.this).getAllPatient();
+        adapter = new PatientRecyclerAdapter(patients,
+                new PatientRecyclerAdapter.OnItemClickListner() {
+            @Override
+            public void onClick(int position) {
+                patients.get(position);
+                Toast.makeText(activity, ""+patients.get(position).getName(), Toast.LENGTH_SHORT).show();
+            }
+        });
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerViewUsers.setLayoutManager(mLayoutManager);
         recyclerViewUsers.setItemAnimator(new DefaultItemAnimator());
         recyclerViewUsers.setHasFixedSize(true);
-        recyclerViewUsers.setAdapter(usersRecyclerAdapter);
+        recyclerViewUsers.setAdapter(adapter);
         databaseHelper = new DatabaseHelper(activity);
 
-        String emailFromIntent = getIntent().getStringExtra("EMAIL");
-        textViewName.setText(emailFromIntent);
 
-        getDataFromSQLite();
+
     }
 
-    /**
-     * This method is to fetch all user records from SQLite
-     */
-    private void getDataFromSQLite() {
-        // AsyncTask is used that SQLite operation not blocks the UI Thread.
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                listUsers.clear();
-                listUsers.addAll(databaseHelper.getAllUser());
 
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-                usersRecyclerAdapter.notifyDataSetChanged();
-            }
-        }.execute();
-    }
 }

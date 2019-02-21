@@ -20,4 +20,7 @@
     <string name="action_settings">Settings</string>
     <string name="text_hello">Hello,</string>
     <string name="text_title">Android Tutorials Hub</string>
+    <string name="dialog_message">Alert messgae</string>
+    <string name="dialog_title">Delete</string>
+
 </resources>
