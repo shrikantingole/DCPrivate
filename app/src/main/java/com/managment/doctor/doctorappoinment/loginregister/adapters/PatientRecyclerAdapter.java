@@ -17,6 +17,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 
 public class PatientRecyclerAdapter extends RecyclerView.Adapter<PatientRecyclerAdapter.PatientViewHolder> {
@@ -90,11 +91,27 @@ public class PatientRecyclerAdapter extends RecyclerView.Adapter<PatientRecycler
                 }
             });
         }
+        @OnClick(R.id.ivDelete)
+        public void onDelete()
+        {
+            if(callback != null)
+                callback.onDelete(getAdapterPosition());
+        }
+        @OnClick(R.id.ivEdit)
+        public void onEdit()
+        {
+            if(callback != null)
+                callback.onEdit(getAdapterPosition());
+        }
     }
 
 
     public interface OnItemClickListner
     {
         void onClick(int position);
+
+        void onDelete(int adapterPosition);
+
+        void onEdit(int adapterPosition);
     }
 }

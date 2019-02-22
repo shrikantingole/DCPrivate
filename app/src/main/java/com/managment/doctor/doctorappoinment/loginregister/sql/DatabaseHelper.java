@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Paint;
 import android.util.Log;
 
+import com.managment.doctor.doctorappoinment.loginregister.SharePref;
 import com.managment.doctor.doctorappoinment.loginregister.model.Doctor;
 import com.managment.doctor.doctorappoinment.loginregister.model.Patient;
 
@@ -108,7 +109,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public void updateUser(Doctor doctor) {
         SQLiteDatabase db = this.getWritableDatabase();
-
         ContentValues values = new ContentValues();
         values.put(COLUMN_DOCTOR_NAME, doctor.getName());
         values.put(COLUMN_DOCTOR_EMAIL, doctor.getEmail());
@@ -191,9 +191,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         return doctorList.get(0);
     }
-    public ArrayList<Patient> getAllPatient() {
+    public ArrayList<Patient> getAllPatient(Context context) {
+        String selection = COLUMN_PATIENT_DOCTOR+ " = ?";
         ArrayList<Patient> list = new ArrayList<>();
-
+        String[] selectionArgs = {SharePref.getInstance(context).getSharedPreferenceString("email","")};
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(TABLE_PATIENT, //Table to query
                 null,    //columns to return
@@ -279,5 +280,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
         return list;
+    }
+
+    public void deletePatient(Patient patient)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        // delete doctor record by id
+        db.delete(TABLE_PATIENT, COLUMN_PATIENT_ID+ " = ?",
+                new String[]{String.valueOf(patient.getId())});
+        db.close();
+    }
+
+    public void updatePatient(Patient d)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_PATIENT_NAME, d.getName());
+        values.put(COLUMN_PATIENT_EMAIL, d.getName());
+        values.put(COLUMN_PATIENT_GENDER, d.getName());
+        values.put(COLUMN_PATIENT_REGDATE, d.getName());
+        values.put(COLUMN_PATIENT_CITY, d.getName());
+        values.put(COLUMN_PATIENT_CONTACT, d.getName());
+        values.put(COLUMN_PATIENT_ILLNESS, d.getName());
+
+        db.update(TABLE_PATIENT, values, COLUMN_PATIENT_ID+ " = ?",
+                new String[]{String.valueOf(d.getId())});
+        db.close();
     }
 }
