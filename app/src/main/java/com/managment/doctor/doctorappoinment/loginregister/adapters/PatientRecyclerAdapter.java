@@ -42,6 +42,7 @@ public class PatientRecyclerAdapter extends RecyclerView.Adapter<PatientRecycler
     public void onBindViewHolder(PatientViewHolder holder, int position) {
         holder.textViewName.setText(patientList.get(position).getName());
         holder.tvcity.setText(patientList.get(position).getCity());
+        holder.tvEmail.setText(patientList.get(position).getEmail());
         holder.tvappdate.setText(patientList.get(position).getOppDate());
         holder.tvcontact.setText(patientList.get(position).getContact());
         holder.tvgender.setText(patientList.get(position).getGender());
@@ -65,6 +66,9 @@ public class PatientRecyclerAdapter extends RecyclerView.Adapter<PatientRecycler
 
         @BindView(R.id.tvcity)
         TextView tvcity;
+
+        @BindView(R.id.tvemail)
+        TextView tvEmail;
 
         @BindView(R.id.tvgender)
         TextView tvgender;

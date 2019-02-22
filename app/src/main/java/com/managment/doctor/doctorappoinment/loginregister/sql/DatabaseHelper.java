@@ -6,7 +6,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.graphics.Paint;
 import android.util.Log;
 
 import com.managment.doctor.doctorappoinment.loginregister.SharePref;
@@ -65,14 +64,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    public void addUser(Doctor doctor) {
+    public boolean addUser(Doctor doctor) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(COLUMN_DOCTOR_NAME, doctor.getName());
         values.put(COLUMN_DOCTOR_EMAIL, doctor.getEmail());
         values.put(COLUMN_DOCTOR_PASSWORD, doctor.getPassword());
-        db.insert(TABLE_DOCTOR, null, values);
+        long id=db.insert(TABLE_DOCTOR, null, values);
         db.close();
+        return id>0;
     }
 
     public List<Doctor> getAllUser() {
@@ -198,8 +198,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(TABLE_PATIENT, //Table to query
                 null,    //columns to return
-                null,        //columns for the WHERE clause
-                null,        //The values for the WHERE clause
+                selection,        //columns for the WHERE clause
+                selectionArgs,        //The values for the WHERE clause
                 null,       //group the rows
                 null,       //filter by row groups
                 null); //The sort order
@@ -228,7 +228,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return list.get(0);
     }
 
-    public void addPatient(Patient patient)
+    public boolean addPatient(Patient patient)
     {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -244,6 +244,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         long id=db.insert(TABLE_PATIENT, null, values);
         Log.d("XXXZZZXXX", "addPatient: "+id);
         db.close();
+        return id>0;
     }
 
     private ArrayList<Doctor> parseDoctorCursor(Cursor cursor)
@@ -273,6 +274,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 patient.setEmail(cursor.getString(cursor.getColumnIndex(COLUMN_PATIENT_EMAIL)));
                 patient.setGender(cursor.getString(cursor.getColumnIndex(COLUMN_PATIENT_GENDER)));
                 patient.setRegDate(cursor.getString(cursor.getColumnIndex(COLUMN_PATIENT_REGDATE)));
+                patient.setOppDate(cursor.getString(cursor.getColumnIndex(COLUMN_PATIENT_OPPDATE)));
                 patient.setCity(cursor.getString(cursor.getColumnIndex(COLUMN_PATIENT_CITY)));
                 patient.setContact(cursor.getString(cursor.getColumnIndex(COLUMN_PATIENT_CONTACT)));
                 patient.setIllness(cursor.getString(cursor.getColumnIndex(COLUMN_PATIENT_ILLNESS)));
@@ -285,26 +287,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void deletePatient(Patient patient)
     {
         SQLiteDatabase db = this.getWritableDatabase();
-        // delete doctor record by id
-        db.delete(TABLE_PATIENT, COLUMN_PATIENT_ID+ " = ?",
-                new String[]{String.valueOf(patient.getId())});
+        db.delete(TABLE_PATIENT, COLUMN_PATIENT_ID+ " = ?", new String[]{String.valueOf(patient.getId())});
         db.close();
     }
 
-    public void updatePatient(Patient d)
+    public boolean updatePatient(Patient d)
     {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(COLUMN_PATIENT_NAME, d.getName());
-        values.put(COLUMN_PATIENT_EMAIL, d.getName());
-        values.put(COLUMN_PATIENT_GENDER, d.getName());
-        values.put(COLUMN_PATIENT_REGDATE, d.getName());
-        values.put(COLUMN_PATIENT_CITY, d.getName());
-        values.put(COLUMN_PATIENT_CONTACT, d.getName());
-        values.put(COLUMN_PATIENT_ILLNESS, d.getName());
+        values.put(COLUMN_PATIENT_EMAIL, d.getEmail());
+        values.put(COLUMN_PATIENT_GENDER, d.getGender());
+        values.put(COLUMN_PATIENT_REGDATE, d.getRegDate());
+        values.put(COLUMN_PATIENT_CITY, d.getCity());
+        values.put(COLUMN_PATIENT_CONTACT, d.getContact());
+        values.put(COLUMN_PATIENT_ILLNESS, d.getIllness());
+        values.put(COLUMN_PATIENT_OPPDATE, d.getOppDate());
 
-        db.update(TABLE_PATIENT, values, COLUMN_PATIENT_ID+ " = ?",
-                new String[]{String.valueOf(d.getId())});
+        int id=db.update(TABLE_PATIENT,values, COLUMN_PATIENT_ID+ " = ?", new String[]{String.valueOf(d.getId())});
         db.close();
+        return id>0;
     }
 }

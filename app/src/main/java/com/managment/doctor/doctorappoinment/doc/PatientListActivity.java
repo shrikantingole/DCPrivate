@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.managment.doctor.doctorappoinment.R;
@@ -16,7 +18,9 @@ import com.managment.doctor.doctorappoinment.loginregister.sql.DatabaseHelper;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 
 public class PatientListActivity extends AppCompatActivity {
@@ -26,14 +30,23 @@ public class PatientListActivity extends AppCompatActivity {
     private ArrayList<Patient> patients = new ArrayList<>();
     private PatientRecyclerAdapter adapter;
 
+    @BindView(R.id.tvTitle)
+    TextView tvTitle;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_users_list);
         ButterKnife.bind(this);
+        tvTitle.setText("View Patient");
         initViews();
         initObjects();
 
+    }
+    @OnClick(R.id.ivBack)
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 
     private void initViews() {
@@ -42,7 +55,7 @@ public class PatientListActivity extends AppCompatActivity {
 
     private void initObjects() {
         patients = new ArrayList<>();
-        patients = DatabaseHelper.getInstance(PatientListActivity.this).getAllPatient(getApplicationContext());
+        patients.addAll(DatabaseHelper.getInstance(PatientListActivity.this).getAllPatient(getApplicationContext()));
         adapter = new PatientRecyclerAdapter(patients,
                 new PatientRecyclerAdapter.OnItemClickListner() {
                     @Override
@@ -54,6 +67,7 @@ public class PatientListActivity extends AppCompatActivity {
                     public void onDelete(int adapterPosition) {
                         DatabaseHelper.getInstance(PatientListActivity.this).deletePatient(patients.get(adapterPosition));
                         Toast.makeText(activity, "Deleted", Toast.LENGTH_SHORT).show();
+                       update();
                     }
 
                     @Override
@@ -71,5 +85,18 @@ public class PatientListActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        update();
+    }
+    private  void update()
+    {
+        if (adapter!=null) {
+            patients.clear();
+            patients.addAll(DatabaseHelper.getInstance(PatientListActivity.this).getAllPatient(getApplicationContext()));
+            adapter.notifyDataSetChanged();
+        }
+    }
 
 }

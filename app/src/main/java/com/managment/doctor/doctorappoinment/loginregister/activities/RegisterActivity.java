@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatTextView;
 import android.view.View;
+import android.widget.Toast;
 
 import com.managment.doctor.doctorappoinment.R;
 import com.managment.doctor.doctorappoinment.loginregister.helpers.InputValidation;
@@ -139,28 +140,20 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             doctor.setEmail(textInputEditTextEmail.getText().toString().trim());
             doctor.setPassword(textInputEditTextPassword.getText().toString().trim());
 
-            databaseHelper.addUser(doctor);
 
-            // Snack Bar to show success message that record saved successfully
-            Snackbar.make(nestedScrollView, getString(R.string.success_message), Snackbar.LENGTH_LONG).show();
-            emptyInputEditText();
+            if (databaseHelper.addUser(doctor))
+            {
+                Toast.makeText(activity, getString(R.string.success_message), Toast.LENGTH_SHORT).show();
+                finish();
+            }
 
 
         } else {
             // Snack Bar to show error message that record already exists
-            Snackbar.make(nestedScrollView, getString(R.string.error_email_exists), Snackbar.LENGTH_LONG).show();
+            Toast.makeText(activity,  getString(R.string.error_email_exists), Toast.LENGTH_SHORT).show();
         }
 
 
     }
 
-    /**
-     * This method is to empty all input edit text
-     */
-    private void emptyInputEditText() {
-        textInputEditTextName.setText(null);
-        textInputEditTextEmail.setText(null);
-        textInputEditTextPassword.setText(null);
-        textInputEditTextConfirmPassword.setText(null);
-    }
 }
