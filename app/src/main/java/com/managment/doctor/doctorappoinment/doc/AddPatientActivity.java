@@ -62,7 +62,7 @@ public class AddPatientActivity extends AppCompatActivity {
     private String illness = "";
     private Patient patient;
     String list[];
-    private String date;
+    private String date="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
