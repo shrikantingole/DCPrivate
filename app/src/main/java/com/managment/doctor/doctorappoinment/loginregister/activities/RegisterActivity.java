@@ -1,28 +1,40 @@
 package com.managment.doctor.doctorappoinment.loginregister.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatTextView;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.managment.doctor.doctorappoinment.R;
+import com.managment.doctor.doctorappoinment.doc.DashBoard;
 import com.managment.doctor.doctorappoinment.loginregister.helpers.InputValidation;
 import com.managment.doctor.doctorappoinment.loginregister.model.Doctor;
 import com.managment.doctor.doctorappoinment.loginregister.sql.DatabaseHelper;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
 
     private final AppCompatActivity activity = RegisterActivity.this;
 
-    private NestedScrollView nestedScrollView;
 
     private TextInputLayout textInputLayoutName;
     private TextInputLayout textInputLayoutEmail;
@@ -41,10 +53,14 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private DatabaseHelper databaseHelper;
     private Doctor doctor;
 
+    @BindView(R.id.progressbar)
+    ProgressBar progressBar;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+        ButterKnife.bind(this);
 
         initViews();
         initListeners();
@@ -55,21 +71,20 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
      * This method is to initialize views
      */
     private void initViews() {
-        nestedScrollView = (NestedScrollView) findViewById(R.id.nestedScrollView);
 
-        textInputLayoutName = (TextInputLayout) findViewById(R.id.textInputLayoutName);
-        textInputLayoutEmail = (TextInputLayout) findViewById(R.id.textInputLayoutEmail);
-        textInputLayoutPassword = (TextInputLayout) findViewById(R.id.textInputLayoutPassword);
-        textInputLayoutConfirmPassword = (TextInputLayout) findViewById(R.id.textInputLayoutConfirmPassword);
+        textInputLayoutName = findViewById(R.id.textInputLayoutName);
+        textInputLayoutEmail = findViewById(R.id.textInputLayoutEmail);
+        textInputLayoutPassword = findViewById(R.id.textInputLayoutPassword);
+        textInputLayoutConfirmPassword = findViewById(R.id.textInputLayoutConfirmPassword);
 
-        textInputEditTextName = (TextInputEditText) findViewById(R.id.textInputEditTextName);
-        textInputEditTextEmail = (TextInputEditText) findViewById(R.id.textInputEditTextEmail);
-        textInputEditTextPassword = (TextInputEditText) findViewById(R.id.textInputEditTextPassword);
-        textInputEditTextConfirmPassword = (TextInputEditText) findViewById(R.id.textInputEditTextConfirmPassword);
+        textInputEditTextName = findViewById(R.id.textInputEditTextName);
+        textInputEditTextEmail = findViewById(R.id.textInputEditTextEmail);
+        textInputEditTextPassword = findViewById(R.id.textInputEditTextPassword);
+        textInputEditTextConfirmPassword = findViewById(R.id.textInputEditTextConfirmPassword);
 
-        appCompatButtonRegister = (AppCompatButton) findViewById(R.id.appCompatButtonRegister);
+        appCompatButtonRegister = findViewById(R.id.appCompatButtonRegister);
 
-        appCompatTextViewLoginLink = (AppCompatTextView) findViewById(R.id.appCompatTextViewLoginLink);
+        appCompatTextViewLoginLink = findViewById(R.id.appCompatTextViewLoginLink);
 
     }
 
@@ -133,26 +148,75 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             return;
         }
 
-        if (!databaseHelper.checkUser(textInputEditTextEmail.getText().toString().trim())) {
-
-            doctor.setName(textInputEditTextName.getText().toString().trim());
-            doctor.setEmail(textInputEditTextEmail.getText().toString().trim());
-            doctor.setPassword(textInputEditTextPassword.getText().toString().trim());
-
-
-            if (databaseHelper.addUser(doctor))
-            {
-                Toast.makeText(activity, getString(R.string.success_message), Toast.LENGTH_SHORT).show();
-                finish();
-            }
-
-
-        } else {
-            // Snack Bar to show error message that record already exists
-            Toast.makeText(activity,  getString(R.string.error_email_exists), Toast.LENGTH_SHORT).show();
-        }
+        loginByMail();
+//
+//        if (!databaseHelper.checkUser(textInputEditTextEmail.getText().toString().trim())) {
+//
+//            doctor.setName(textInputEditTextName.getText().toString().trim());
+//            doctor.setEmail(textInputEditTextEmail.getText().toString().trim());
+//            doctor.setPassword(textInputEditTextPassword.getText().toString().trim());
+//
+//
+//            if (databaseHelper.addUser(doctor))
+//            {
+//                Toast.makeText(activity, getString(R.string.success_message), Toast.LENGTH_SHORT).show();
+//                finish();
+//            }
+//
+//
+//        } else {
+//            // Snack Bar to show error message that record already exists
+//            Toast.makeText(activity,  getString(R.string.error_email_exists), Toast.LENGTH_SHORT).show();
+//        }
 
 
     }
 
+    private void loginByMail() {
+        doctor.setName(textInputEditTextName.getText().toString().trim());
+        doctor.setEmail(textInputEditTextEmail.getText().toString().trim());
+        doctor.setPassword(textInputEditTextPassword.getText().toString().trim());
+        progressBar.setVisibility(View.VISIBLE);
+        FirebaseAuth.getInstance().createUserWithEmailAndPassword(doctor.getEmail(), doctor.getPassword())
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        Toast.makeText(RegisterActivity.this, "createUserWithEmail:onComplete:" + task.isSuccessful(), Toast.LENGTH_SHORT).show();
+                        // If sign in fails, display a message to the user. If sign in succeeds
+                        // the auth state listener will be notified and logic to handle the
+                        // signed in user can be handled in the listener.
+                        if (!task.isSuccessful()) {
+                            Toast.makeText(RegisterActivity.this, "Authentication failed." + task.getException(),
+                                    Toast.LENGTH_SHORT).show();
+                            progressBar.setVisibility(View.GONE);
+                        } else {
+                            createUser();
+                        }
+                    }
+                });
+    }
+
+    private void createUser() {
+        DatabaseReference mFirebaseInstance = FirebaseDatabase.getInstance().getReference("DoctorsList");
+        String userId = mFirebaseInstance.child(FirebaseAuth.getInstance().getUid()).getKey();
+        mFirebaseInstance.child(userId).setValue(doctor).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                progressBar.setVisibility(View.GONE);
+                if (DatabaseHelper.getInstance(RegisterActivity.this).addUser(doctor)) {
+                    startActivity(new Intent(RegisterActivity.this, DashBoard.class));
+                    finish();
+                } else Toast.makeText(RegisterActivity.this, "Authentication failed.",
+                        Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                progressBar.setVisibility(View.GONE);
+
+            }
+        });
+
+
+    }
 }

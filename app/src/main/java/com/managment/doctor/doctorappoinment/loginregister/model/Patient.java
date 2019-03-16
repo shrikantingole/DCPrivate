@@ -1,7 +1,10 @@
 package com.managment.doctor.doctorappoinment.loginregister.model;
 
+import com.google.firebase.database.IgnoreExtraProperties;
 
 import java.io.Serializable;
+
+@IgnoreExtraProperties
 
 public class Patient implements Serializable {
 

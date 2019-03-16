@@ -1,7 +1,9 @@
 package com.managment.doctor.doctorappoinment.doc;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -10,14 +12,21 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.managment.doctor.doctorappoinment.R;
 import com.managment.doctor.doctorappoinment.Utils;
 import com.managment.doctor.doctorappoinment.loginregister.SharePref;
+import com.managment.doctor.doctorappoinment.loginregister.activities.RegisterActivity;
 import com.managment.doctor.doctorappoinment.loginregister.model.Patient;
 import com.managment.doctor.doctorappoinment.loginregister.sql.DatabaseHelper;
 
@@ -27,7 +36,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.managment.doctor.doctorappoinment.Utils.DOCTORKEY;
+import static com.managment.doctor.doctorappoinment.Utils.PATIENTKEY;
+
 public class AddPatientActivity extends AppCompatActivity {
+
+    @BindView(R.id.progressbar)
+    ProgressBar progressbar;
 
     @BindView(R.id.etPName)
     EditText etName;
@@ -63,12 +78,15 @@ public class AddPatientActivity extends AppCompatActivity {
     private Patient patient;
     String list[];
     private String date="";
+    private Patient d;
+    private String doctorName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_patient);
         ButterKnife.bind(this);
+        doctorName=FirebaseAuth.getInstance().getUid();
         tvTitle.setText("Add Patient");
         list = getResources().getStringArray(R.array.illness);
         setSpinner();
@@ -94,7 +112,7 @@ public class AddPatientActivity extends AppCompatActivity {
     }
 
     private void setSpinner() {
-        ArrayAdapter aa = new ArrayAdapter(this, android.R.layout.simple_spinner_item, list);
+        ArrayAdapter<String> aa = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, list);
         aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spPAddressIllType.setAdapter(aa);
         spPAddressIllType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -138,7 +156,7 @@ public class AddPatientActivity extends AppCompatActivity {
 
     @OnClick(R.id.btnSubmit)
     public void submitDetails() {
-
+        if (progressbar.getVisibility()==View.VISIBLE)return;
         if (isEmpty(etName) || isEmpty(etMail) || isEmpty(etContact) || isEmpty(etCity))
             Toast.makeText(this, "Fill all field", Toast.LENGTH_SHORT).show();
         else if (illness.isEmpty()) {
@@ -146,19 +164,19 @@ public class AddPatientActivity extends AppCompatActivity {
         } else if (date.isEmpty())
             Toast.makeText(this, "select Appoinment date", Toast.LENGTH_SHORT).show();
         else {
-            Patient d = new Patient();
+            d=new Patient();
             d.setName(getString(etName));
             d.setContact(getString(etContact));
             d.setEmail(getString(etMail));
             d.setCity(getString(etCity));
             d.setGender(!swGender.isChecked() ? "Male" : "Female");
-            d.setDoctor(SharePref.getInstance(this).getSharedPreferenceString("email", ""));
+            d.setDoctor(doctorName);
             d.setIllness(illness);
             d.setOppDate(date);
             if (patient == null) {
                 d.setRegDate(Utils.getTodayDate());
                 if (DatabaseHelper.getInstance(this).addPatient(d))
-                    finish();
+                   createUser();
             } else {
                 d.setId(patient.getId());
                 d.setRegDate(patient.getRegDate());
@@ -175,5 +193,25 @@ public class AddPatientActivity extends AppCompatActivity {
 
     private boolean isEmpty(EditText editText) {
         return editText.getText().toString().trim().isEmpty();
+    }
+
+    private void createUser() {
+        DatabaseReference mFirebaseInstance = FirebaseDatabase.getInstance().getReference(PATIENTKEY)
+                .child(FirebaseAuth.getInstance().getUid());
+        String userId = mFirebaseInstance.push().getKey();
+        mFirebaseInstance.child(userId).setValue(d).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                if (DatabaseHelper.getInstance(AddPatientActivity.this).addPatient(d)) {
+                    finish();
+                } else Toast.makeText(AddPatientActivity.this, "Authentication failed.",
+                        Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(AddPatientActivity.this, "Someting went wrong", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

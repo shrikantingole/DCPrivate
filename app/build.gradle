@@ -28,5 +28,13 @@ dependencies {
     implementation 'com.android.support:design:28.0.0'
     implementation 'com.jakewharton:butterknife:8.5.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
+    // Add this line
+    implementation 'com.google.firebase:firebase-core:11.6.0'
+    implementation 'com.google.firebase:firebase-auth:11.6.0'
+    implementation 'com.google.android.gms:play-services:11.6.0'
+    implementation 'com.firebase:firebase-client-android:2.5.2'
+    implementation 'com.google.android.gms:play-services-auth:11.6.0'
 
 }
+// Add to the bottom of the file
+apply plugin: 'com.google.gms.google-services'

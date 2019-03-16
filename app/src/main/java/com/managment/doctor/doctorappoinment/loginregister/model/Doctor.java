@@ -1,7 +1,9 @@
 package com.managment.doctor.doctorappoinment.loginregister.model;
 
-public class Doctor {
+import com.google.firebase.database.IgnoreExtraProperties;
 
+@IgnoreExtraProperties
+public class Doctor {
     private int id;
     private String name;
     private String email;

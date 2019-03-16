@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.managment.doctor.doctorappoinment.R;
 import com.managment.doctor.doctorappoinment.loginregister.SharePref;
 import com.managment.doctor.doctorappoinment.loginregister.model.Doctor;
@@ -39,7 +40,8 @@ public class DashBoard extends AppCompatActivity
     }
 
     private void initObjects() {
-        String email=SharePref.getInstance(this).getSharedPreferenceString("email","");
+//        String email=SharePref.getInstance(this).getSharedPreferenceString("email","");
+        String email=FirebaseAuth.getInstance().getCurrentUser().getEmail();
         Doctor d=DatabaseHelper.getInstance(this).getDoctorDetails(email);
         if (d!=null)
         textViewName.setText("Welcome "+d.getName());

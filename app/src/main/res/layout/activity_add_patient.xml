@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".doc.AddPatientActivity">
 
-    <include layout="@layout/toolbar"/>
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar" />
+
     <TextView
+        android:id="@+id/pDetails"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbar"
         android:background="@color/offwhite"
         android:paddingLeft="10dp"
         android:paddingTop="5dp"
@@ -20,7 +25,8 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_below="@+id/pDetails">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -120,9 +126,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:background="@color/offwhite"
+                    android:paddingLeft="10dp"
                     android:paddingTop="5dp"
                     android:paddingBottom="5dp"
-                    android:paddingLeft="10dp"
                     android:text="Patient Details"
                     android:textColor="@color/black"
                     android:textSize="18dp" />
@@ -173,4 +179,11 @@
 
         </LinearLayout>
     </ScrollView>
-</LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progressbar"
+        android:layout_width="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        android:layout_height="wrap_content" />
+</RelativeLayout>

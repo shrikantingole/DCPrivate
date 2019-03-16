@@ -2,6 +2,7 @@ package com.managment.doctor.doctorappoinment.loginregister.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
@@ -11,19 +12,27 @@ import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatTextView;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 import com.managment.doctor.doctorappoinment.R;
 import com.managment.doctor.doctorappoinment.doc.DashBoard;
 import com.managment.doctor.doctorappoinment.loginregister.SharePref;
 import com.managment.doctor.doctorappoinment.loginregister.helpers.InputValidation;
+import com.managment.doctor.doctorappoinment.loginregister.model.Doctor;
 import com.managment.doctor.doctorappoinment.loginregister.sql.DatabaseHelper;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
     private final AppCompatActivity activity = LoginActivity.this;
-
-    private NestedScrollView nestedScrollView;
 
     private TextInputLayout textInputLayoutEmail;
     private TextInputLayout textInputLayoutPassword;
@@ -38,15 +47,21 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private InputValidation inputValidation;
     private DatabaseHelper databaseHelper;
 
+    @BindView(R.id.progressbar)
+    ProgressBar progressBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
-        if (!SharePref.getInstance(this).getSharedPreferenceString("email","").isEmpty()) {
+        ButterKnife.bind(this);
+        if (FirebaseAuth.getInstance().getCurrentUser()!=null) {
             startActivity(new Intent(this, DashBoard.class));
             finish();
         }
+//        if (!SharePref.getInstance(this).getSharedPreferenceString("email","").isEmpty()) {
+//            startActivity(new Intent(this, DashBoard.class));
+//            finish();
+//        }
         initViews();
         initListeners();
         initObjects();
@@ -56,19 +71,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
      * This method is to initialize views
      */
     private void initViews() {
-
-        nestedScrollView = (NestedScrollView) findViewById(R.id.nestedScrollView);
-
-        textInputLayoutEmail = (TextInputLayout) findViewById(R.id.textInputLayoutEmail);
-        textInputLayoutPassword = (TextInputLayout) findViewById(R.id.textInputLayoutPassword);
-
-        textInputEditTextEmail = (TextInputEditText) findViewById(R.id.textInputEditTextEmail);
-        textInputEditTextPassword = (TextInputEditText) findViewById(R.id.textInputEditTextPassword);
-
-        appCompatButtonLogin = (AppCompatButton) findViewById(R.id.appCompatButtonLogin);
-
-        textViewLinkRegister = (AppCompatTextView) findViewById(R.id.textViewLinkRegister);
-
+        textInputLayoutEmail = findViewById(R.id.textInputLayoutEmail);
+        textInputLayoutPassword = findViewById(R.id.textInputLayoutPassword);
+        textInputEditTextEmail = findViewById(R.id.textInputEditTextEmail);
+        textInputEditTextPassword = findViewById(R.id.textInputEditTextPassword);
+        appCompatButtonLogin = findViewById(R.id.appCompatButtonLogin);
+        textViewLinkRegister = findViewById(R.id.textViewLinkRegister);
     }
 
     /**
@@ -116,25 +124,43 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             return;
         }
 
-        if (databaseHelper.checkUser(textInputEditTextEmail.getText().toString().trim(), textInputEditTextPassword.getText().toString().trim())) {
-
-
-            SharePref.getInstance(this).setSharedPreferenceString("email",textInputEditTextEmail.getText().toString().trim());
-
-            Intent accountsIntent = new Intent(activity, DashBoard.class);
-            emptyInputEditText();
-            startActivity(accountsIntent);
-            finish();
-
-
-        } else {
-            // Snack Bar to show success message that record is wrong
-            Toast.makeText(activity, getString(R.string.error_valid_email_password), Toast.LENGTH_SHORT).show();
-        }
+        loginByMail(textInputEditTextEmail.getText().toString().trim(), textInputEditTextPassword.getText().toString().trim());
+//        if (databaseHelper.checkUser(textInputEditTextEmail.getText().toString().trim(), textInputEditTextPassword.getText().toString().trim())) {
+//
+//
+//            SharePref.getInstance(this).setSharedPreferenceString("email",textInputEditTextEmail.getText().toString().trim());
+//
+//            Intent accountsIntent = new Intent(activity, DashBoard.class);
+//            emptyInputEditText();
+//            startActivity(accountsIntent);
+//            finish();
+//
+//
+//        } else {
+//            // Snack Bar to show success message that record is wrong
+//            Toast.makeText(activity, getString(R.string.error_valid_email_password), Toast.LENGTH_SHORT).show();
+//        }
     }
 
-    private void emptyInputEditText() {
-        textInputEditTextEmail.setText(null);
-        textInputEditTextPassword.setText(null);
+    private void loginByMail(final String email, final String password)
+    {
+        progressBar.setVisibility(View.VISIBLE);
+
+        FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(getApplicationContext(), "Login successful!", Toast.LENGTH_LONG).show();
+                            progressBar.setVisibility(View.GONE);
+                            Intent intent = new Intent(LoginActivity.this, DashBoard.class);
+                            startActivity(intent);
+                        }
+                        else {
+                            Toast.makeText(getApplicationContext(), "Login failed! Please try again later", Toast.LENGTH_LONG).show();
+                            progressBar.setVisibility(View.GONE);
+                        }
+                    }
+                });
     }
 }
