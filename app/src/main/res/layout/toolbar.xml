@@ -29,5 +29,16 @@
             android:textColor="@color/white"
             android:textSize="16dp"
             tools:text="Title" />
+
+
+        <ImageView
+            android:id="@+id/ivRight"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            tools:src="@drawable/ic_reuse" />
+
     </RelativeLayout>
 </android.support.v7.widget.Toolbar>

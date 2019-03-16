@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,6 +43,9 @@ public class PatientListActivity extends AppCompatActivity {
     @BindView(R.id.tvTitle)
     TextView tvTitle;
 
+    @BindView(R.id.ivRight)
+    ImageView ivRefresh;
+
     @BindView(R.id.progressBar)
     ProgressBar progressBar;
 
@@ -50,6 +54,7 @@ public class PatientListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_users_list);
         ButterKnife.bind(this);
+        ivRefresh.setImageDrawable(getResources().getDrawable(R.drawable.ic_reuse));
         progressBar.setVisibility(View.VISIBLE);
         tvTitle.setText("View Patient");
         initViews();
@@ -135,5 +140,13 @@ public class PatientListActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @OnClick(R.id.ivRight)
+    public void onRefresh() {
+        patients.clear();
+        getAllPatientList();
+        progressBar.setVisibility(View.VISIBLE);
+
     }
 }
