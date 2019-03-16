@@ -42,9 +42,9 @@ public class DashBoard extends AppCompatActivity
     private void initObjects() {
 //        String email=SharePref.getInstance(this).getSharedPreferenceString("email","");
         String email=FirebaseAuth.getInstance().getCurrentUser().getEmail();
-        Doctor d=DatabaseHelper.getInstance(this).getDoctorDetails(email);
-        if (d!=null)
-        textViewName.setText("Welcome "+d.getName());
+//        Doctor d=DatabaseHelper.getInstance(this).getDoctorDetails(email);
+//        if (d!=null)
+        textViewName.setText("Welcome "+email);
     }
 
 

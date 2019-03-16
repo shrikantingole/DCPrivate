@@ -7,10 +7,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.widget.ImageView;
+import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.managment.doctor.doctorappoinment.R;
 import com.managment.doctor.doctorappoinment.loginregister.adapters.PatientRecyclerAdapter;
 import com.managment.doctor.doctorappoinment.loginregister.model.Patient;
@@ -21,6 +28,8 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static com.managment.doctor.doctorappoinment.Utils.PATIENTKEY;
 
 
 public class PatientListActivity extends AppCompatActivity {
@@ -33,14 +42,20 @@ public class PatientListActivity extends AppCompatActivity {
     @BindView(R.id.tvTitle)
     TextView tvTitle;
 
+    @BindView(R.id.progressBar)
+    ProgressBar progressBar;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_users_list);
         ButterKnife.bind(this);
+        progressBar.setVisibility(View.VISIBLE);
         tvTitle.setText("View Patient");
         initViews();
         initObjects();
+        getAllPatientList();
+
 
     }
     @OnClick(R.id.ivBack)
@@ -55,7 +70,7 @@ public class PatientListActivity extends AppCompatActivity {
 
     private void initObjects() {
         patients = new ArrayList<>();
-        patients.addAll(DatabaseHelper.getInstance(PatientListActivity.this).getAllPatient(getApplicationContext()));
+//        patients.addAll(DatabaseHelper.getInstance(PatientListActivity.this).getAllPatient(getApplicationContext()));
         adapter = new PatientRecyclerAdapter(patients,
                 new PatientRecyclerAdapter.OnItemClickListner() {
                     @Override
@@ -67,7 +82,7 @@ public class PatientListActivity extends AppCompatActivity {
                     public void onDelete(int adapterPosition) {
                         DatabaseHelper.getInstance(PatientListActivity.this).deletePatient(patients.get(adapterPosition));
                         Toast.makeText(activity, "Deleted", Toast.LENGTH_SHORT).show();
-                       update();
+                        update();
                     }
 
                     @Override
@@ -88,15 +103,37 @@ public class PatientListActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        update();
+//        update();
     }
     private  void update()
     {
-        if (adapter!=null) {
-            patients.clear();
-            patients.addAll(DatabaseHelper.getInstance(PatientListActivity.this).getAllPatient(getApplicationContext()));
+        if (adapter!=null)
+        {
             adapter.notifyDataSetChanged();
+            progressBar.setVisibility(View.GONE);
         }
     }
 
+
+    private void getAllPatientList()
+    {
+        FirebaseDatabase.getInstance().getReference(PATIENTKEY).child(FirebaseAuth.getInstance().getUid())
+                .addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d("Count ", "" + dataSnapshot.getChildrenCount());
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                    Patient post = postSnapshot.getValue(Patient.class);
+                    if (post == null) return;
+                    patients.add(post);
+                }
+                update();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
 }
