@@ -19,6 +19,12 @@ public class Patient implements Serializable {
     private String regDate;
     private String doctor;
 
+    private String key;
+
+    public String getKey() {
+        return key;
+    }
+
     public String getContact() {
         return contact;
     }
@@ -117,4 +123,7 @@ public class Patient implements Serializable {
     // drop table sql query
     public static String DROP_PATIENT_TABLE = "DROP TABLE IF EXISTS " + TABLE_PATIENT;
 
+    public void setFireBaseKey(String key) {
+        this.key = key;
+    }
 }

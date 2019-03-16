@@ -22,7 +22,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.managment.doctor.doctorappoinment.R;
 import com.managment.doctor.doctorappoinment.loginregister.adapters.PatientRecyclerAdapter;
 import com.managment.doctor.doctorappoinment.loginregister.model.Patient;
-import com.managment.doctor.doctorappoinment.loginregister.sql.DatabaseHelper;
 
 import java.util.ArrayList;
 
@@ -85,9 +84,11 @@ public class PatientListActivity extends AppCompatActivity {
 
                     @Override
                     public void onDelete(int adapterPosition) {
-                        DatabaseHelper.getInstance(PatientListActivity.this).deletePatient(patients.get(adapterPosition));
+//                        DatabaseHelper.getInstance(PatientListActivity.this).deletePatient(patients.get(adapterPosition));
+                        FirebaseDatabase.getInstance().getReference(PATIENTKEY).child(FirebaseAuth.getInstance().getUid())
+                                .child(patients.get(adapterPosition).getKey()).removeValue();
                         Toast.makeText(activity, "Deleted", Toast.LENGTH_SHORT).show();
-                        update();
+                        getAllPatientList();
                     }
 
                     @Override
@@ -105,11 +106,7 @@ public class PatientListActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-//        update();
-    }
+
     private  void update()
     {
         if (adapter!=null)
@@ -122,14 +119,16 @@ public class PatientListActivity extends AppCompatActivity {
 
     private void getAllPatientList()
     {
+        progressBar.setVisibility(View.VISIBLE);
         FirebaseDatabase.getInstance().getReference(PATIENTKEY).child(FirebaseAuth.getInstance().getUid())
                 .addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.d("Count ", "" + dataSnapshot.getChildrenCount());
+                patients.clear();
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     Patient post = postSnapshot.getValue(Patient.class);
-                    if (post == null) return;
+                    post.setFireBaseKey(postSnapshot.getKey());
                     patients.add(post);
                 }
                 update();
