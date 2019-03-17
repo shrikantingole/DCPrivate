@@ -72,4 +72,5 @@ public class Utils
         return d;
     }
 
+    public static String url = "https://doctor-app-84650.firebaseio.com/";
 }

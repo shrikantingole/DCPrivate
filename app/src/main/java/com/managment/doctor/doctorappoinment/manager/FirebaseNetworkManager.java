@@ -5,15 +5,18 @@ import android.util.Log;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.managment.doctor.doctorappoinment.Utils;
 import com.managment.doctor.doctorappoinment.loginregister.model.Doctor;
 
 import static com.managment.doctor.doctorappoinment.Utils.DOCTORKEY;
 
 public class FirebaseNetworkManager {
     public void getCurrentDoctorDetails(final LoginDetailsCallback callback) {
-        FirebaseDatabase.getInstance().getReference(DOCTORKEY).child(FirebaseAuth.getInstance().getUid())
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl(Utils.url);
+        databaseReference.child(DOCTORKEY).child(FirebaseAuth.getInstance().getUid())
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {

@@ -17,9 +17,11 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.managment.doctor.doctorappoinment.R;
+import com.managment.doctor.doctorappoinment.Utils;
 import com.managment.doctor.doctorappoinment.loginregister.adapters.PatientRecyclerAdapter;
 import com.managment.doctor.doctorappoinment.loginregister.model.Patient;
 
@@ -120,7 +122,8 @@ public class PatientListActivity extends AppCompatActivity {
     private void getAllPatientList()
     {
         progressBar.setVisibility(View.VISIBLE);
-        FirebaseDatabase.getInstance().getReference(PATIENTKEY).child(FirebaseAuth.getInstance().getUid())
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl(Utils.url);
+        databaseReference.child(PATIENTKEY).child(FirebaseAuth.getInstance().getUid())
                 .addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
