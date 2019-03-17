@@ -73,7 +73,7 @@ public class AddPatientActivity extends AppCompatActivity {
     private String illness = "";
     private Patient patient;
     String list[];
-    private String date="";
+    private String date = "";
     private Patient d;
     private String doctorName;
     private DatabaseReference mFirebaseInstance;
@@ -83,7 +83,7 @@ public class AddPatientActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_patient);
         ButterKnife.bind(this);
-        doctorName=FirebaseAuth.getInstance().getUid();
+        doctorName = FirebaseAuth.getInstance().getUid();
         tvTitle.setText("Add Patient");
         list = getResources().getStringArray(R.array.illness);
         setSpinner();
@@ -98,7 +98,7 @@ public class AddPatientActivity extends AppCompatActivity {
             etContact.setText(patient.getContact());
             swGender.setChecked(patient.getGender().equalsIgnoreCase("Female"));
             etMail.setText(patient.getEmail());
-            date=patient.getOppDate();
+            date = patient.getOppDate();
             for (int i = 0; i < list.length; i++) {
                 if (list[i].equalsIgnoreCase(patient.getIllness())) {
                     spPAddressIllType.setSelection(i);
@@ -153,7 +153,7 @@ public class AddPatientActivity extends AppCompatActivity {
 
     @OnClick(R.id.btnSubmit)
     public void submitDetails() {
-        if (progressbar.getVisibility()==View.VISIBLE)return;
+        if (progressbar.getVisibility() == View.VISIBLE) return;
         if (isEmpty(etName) || isEmpty(etMail) || isEmpty(etContact) || isEmpty(etCity))
             Toast.makeText(this, "Fill all field", Toast.LENGTH_SHORT).show();
         else if (illness.isEmpty()) {
@@ -161,7 +161,7 @@ public class AddPatientActivity extends AppCompatActivity {
         } else if (date.isEmpty())
             Toast.makeText(this, "select Appoinment date", Toast.LENGTH_SHORT).show();
         else {
-            d=new Patient();
+            d = new Patient();
             d.setName(getString(etName));
             d.setContact(getString(etContact));
             d.setEmail(getString(etMail));
@@ -183,7 +183,26 @@ public class AddPatientActivity extends AppCompatActivity {
         }
     }
 
-    private void updatePatient(String userId) {
+
+    private String getString(EditText editText) {
+        return editText.getText().toString().trim();
+    }
+
+    private boolean isEmpty(EditText editText) {
+        return editText.getText().toString().trim().isEmpty();
+    }
+
+    private void performPatientDetails(boolean update) {
+        if (FirebaseAuth.getInstance() == null || FirebaseAuth.getInstance().getUid() == null)
+            return;
+        mFirebaseInstance = FirebaseDatabase.getInstance().getReference(PATIENTKEY)
+                .child(FirebaseAuth.getInstance().getUid());
+        String userId = "";
+        if (!update) {
+            userId = mFirebaseInstance.push().getKey();
+        } else {
+            userId = d.getKey();
+        }
         mFirebaseInstance.child(userId).setValue(d).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
@@ -198,31 +217,6 @@ public class AddPatientActivity extends AppCompatActivity {
                 Toast.makeText(AddPatientActivity.this, "Someting went wrong", Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-
-    private String getString(EditText editText) {
-        return editText.getText().toString().trim();
-    }
-
-    private boolean isEmpty(EditText editText) {
-        return editText.getText().toString().trim().isEmpty();
-    }
-
-    private void performPatientDetails(boolean update) {
-        if (FirebaseAuth.getInstance() == null || FirebaseAuth.getInstance().getUid() == null)
-            return;
-        String userId = "";
-        if (!update) {
-            mFirebaseInstance = FirebaseDatabase.getInstance().getReference(PATIENTKEY)
-                    .child(FirebaseAuth.getInstance().getUid());
-            userId = mFirebaseInstance.push().getKey();
-        } else {
-            mFirebaseInstance = FirebaseDatabase.getInstance().getReference(PATIENTKEY)
-                    .child(FirebaseAuth.getInstance().getUid());
-            userId = d.getKey();
-        }
-        updatePatient(userId);
     }
 
 }
