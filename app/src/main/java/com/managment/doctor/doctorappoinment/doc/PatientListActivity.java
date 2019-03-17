@@ -136,7 +136,7 @@ public class PatientListActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
+                progressBar.setVisibility(View.GONE);
             }
         });
     }
