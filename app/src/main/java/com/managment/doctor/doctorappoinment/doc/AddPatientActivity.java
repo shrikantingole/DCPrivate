@@ -1,7 +1,6 @@
 package com.managment.doctor.doctorappoinment.doc;
 
 import android.app.DatePickerDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -25,8 +24,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.managment.doctor.doctorappoinment.R;
 import com.managment.doctor.doctorappoinment.Utils;
-import com.managment.doctor.doctorappoinment.loginregister.SharePref;
-import com.managment.doctor.doctorappoinment.loginregister.activities.RegisterActivity;
 import com.managment.doctor.doctorappoinment.loginregister.model.Patient;
 import com.managment.doctor.doctorappoinment.loginregister.sql.DatabaseHelper;
 
@@ -36,7 +33,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static com.managment.doctor.doctorappoinment.Utils.DOCTORKEY;
 import static com.managment.doctor.doctorappoinment.Utils.PATIENTKEY;
 
 public class AddPatientActivity extends AppCompatActivity {
@@ -80,6 +76,7 @@ public class AddPatientActivity extends AppCompatActivity {
     private String date="";
     private Patient d;
     private String doctorName;
+    private DatabaseReference mFirebaseInstance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,8 +131,8 @@ public class AddPatientActivity extends AppCompatActivity {
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
-        final int day = calendar.get(Calendar.DAY_OF_MONTH);
-
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        date = day + "/" + month + "/" + year;
         new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
@@ -176,29 +173,17 @@ public class AddPatientActivity extends AppCompatActivity {
             if (patient == null) {
                 d.setRegDate(Utils.getTodayDate());
                 if (DatabaseHelper.getInstance(this).addPatient(d))
-                   createUser();
+                    performPatientDetails(false);
             } else {
                 d.setId(patient.getId());
                 d.setRegDate(patient.getRegDate());
-                if (DatabaseHelper.getInstance(this).updatePatient(d))
-                    finish();
+                d.setFireBaseKey(patient.getKey());
+                performPatientDetails(true);
             }
         }
     }
 
-
-    private String getString(EditText editText) {
-        return editText.getText().toString().trim();
-    }
-
-    private boolean isEmpty(EditText editText) {
-        return editText.getText().toString().trim().isEmpty();
-    }
-
-    private void createUser() {
-        DatabaseReference mFirebaseInstance = FirebaseDatabase.getInstance().getReference(PATIENTKEY)
-                .child(FirebaseAuth.getInstance().getUid());
-        String userId = mFirebaseInstance.push().getKey();
+    private void updatePatient(String userId) {
         mFirebaseInstance.child(userId).setValue(d).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
@@ -214,4 +199,30 @@ public class AddPatientActivity extends AppCompatActivity {
             }
         });
     }
+
+
+    private String getString(EditText editText) {
+        return editText.getText().toString().trim();
+    }
+
+    private boolean isEmpty(EditText editText) {
+        return editText.getText().toString().trim().isEmpty();
+    }
+
+    private void performPatientDetails(boolean update) {
+        if (FirebaseAuth.getInstance() == null || FirebaseAuth.getInstance().getUid() == null)
+            return;
+        String userId = "";
+        if (!update) {
+            mFirebaseInstance = FirebaseDatabase.getInstance().getReference(PATIENTKEY)
+                    .child(FirebaseAuth.getInstance().getUid());
+            userId = mFirebaseInstance.push().getKey();
+        } else {
+            mFirebaseInstance = FirebaseDatabase.getInstance().getReference(PATIENTKEY)
+                    .child(FirebaseAuth.getInstance().getUid());
+            userId = d.getKey();
+        }
+        updatePatient(userId);
+    }
+
 }

@@ -22,7 +22,7 @@
         <activity android:name=".loginregister.activities.RegisterActivity" />
         <activity android:name=".doc.PatientListActivity" />
         <activity android:name=".doc.DashBoard" />
-        <activity android:name=".doc.AddPatientActivity"></activity>
+        <activity android:name=".doc.AddPatientActivity" />
     </application>
 
 </manifest>
