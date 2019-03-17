@@ -3,9 +3,11 @@ package com.managment.doctor.doctorappoinment;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -58,4 +60,16 @@ public class Utils
             void onDeleted();
             void onCancel();
         }
+
+    public static Date getDateString(String date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/mm/yyyy");
+        Date d = null;
+        try {
+            d = sdf.parse(date);
+        } catch (ParseException ex) {
+            Log.v("Exception", ex.getLocalizedMessage());
+        }
+        return d;
+    }
+
 }
