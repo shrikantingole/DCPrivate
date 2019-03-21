@@ -18,6 +18,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.managment.doctor.doctorappoinment.R;
 import com.managment.doctor.doctorappoinment.Utils;
+import com.managment.doctor.doctorappoinment.loginregister.activities.LoginActivity;
 import com.managment.doctor.doctorappoinment.loginregister.adapters.UpcomingEventAdapter;
 import com.managment.doctor.doctorappoinment.loginregister.model.Doctor;
 import com.managment.doctor.doctorappoinment.loginregister.model.Patient;
@@ -42,6 +43,9 @@ public class DashBoard extends AppCompatActivity
     @BindView(R.id.ivBack)
     ImageView ivBack;
 
+    @BindView(R.id.ivRight)
+    ImageView ivSignout;
+
     @BindView(R.id.tvTitle)
     TextView tvTitle;
 
@@ -61,6 +65,7 @@ public class DashBoard extends AppCompatActivity
         ButterKnife.bind(this);
         tvTitle.setText("DashBoard");
         ivBack.setVisibility(View.GONE);
+        ivSignout.setImageDrawable(getResources().getDrawable(R.drawable.ic_reuse));
         initObjects();
         initRecyclerView();
         getAllPatientList();
@@ -146,6 +151,13 @@ public class DashBoard extends AppCompatActivity
                 return Utils.getDateString(o1.getOppDate()).compareTo(Utils.getDateString(o2.getOppDate()));
             }
         });
+    }
+
+    @OnClick(R.id.ivRight)
+    public void signout() {
+        FirebaseAuth.getInstance().signOut();
+        startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+        finish();
     }
 
 }

@@ -2,7 +2,6 @@ package com.managment.doctor.doctorappoinment.loginregister.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
@@ -11,18 +10,8 @@ import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatTextView;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.managment.doctor.doctorappoinment.R;
-import com.managment.doctor.doctorappoinment.doc.DashBoard;
 import com.managment.doctor.doctorappoinment.loginregister.helpers.InputValidation;
 import com.managment.doctor.doctorappoinment.loginregister.model.Doctor;
 import com.managment.doctor.doctorappoinment.loginregister.sql.DatabaseHelper;
@@ -176,47 +165,26 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         doctor.setName(textInputEditTextName.getText().toString().trim());
         doctor.setEmail(textInputEditTextEmail.getText().toString().trim());
         doctor.setPassword(textInputEditTextPassword.getText().toString().trim());
-        progressBar.setVisibility(View.VISIBLE);
-        FirebaseAuth.getInstance().createUserWithEmailAndPassword(doctor.getEmail(), doctor.getPassword())
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Toast.makeText(RegisterActivity.this, "createUserWithEmail:onComplete:" + task.isSuccessful(), Toast.LENGTH_SHORT).show();
-                        // If sign in fails, display a message to the user. If sign in succeeds
-                        // the auth state listener will be notified and logic to handle the
-                        // signed in user can be handled in the listener.
-                        if (!task.isSuccessful()) {
-                            Toast.makeText(RegisterActivity.this, "Authentication failed." + task.getException(),
-                                    Toast.LENGTH_SHORT).show();
-                            progressBar.setVisibility(View.GONE);
-                        } else {
-                            createUser();
-                        }
-                    }
-                });
+        startActivity(new Intent(getApplicationContext(), ImageAuthActivity.class).putExtra("Doctor", doctor));
+        finish();
+//        FirebaseAuth.getInstance().createUserWithEmailAndPassword(doctor.getEmail(), doctor.getPassword())
+//                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<AuthResult> task) {
+//                        Toast.makeText(RegisterActivity.this, "createUserWithEmail:onComplete:" + task.isSuccessful(), Toast.LENGTH_SHORT).show();
+//                        // If sign in fails, display a message to the user. If sign in succeeds
+//                        // the auth state listener will be notified and logic to handle the
+//                        // signed in user can be handled in the listener.
+//                        if (!task.isSuccessful()) {
+//                            Toast.makeText(RegisterActivity.this, "Authentication failed." + task.getException(),
+//                                    Toast.LENGTH_SHORT).show();
+//                            progressBar.setVisibility(View.GONE);
+//                        } else {
+//                           startActivity(new Intent(getApplicationContext(),ImageAuthActivity.class));
+//                           finish();
+//                        }
+//                    }
+//                });
     }
 
-    private void createUser() {
-        DatabaseReference mFirebaseInstance = FirebaseDatabase.getInstance().getReference("DoctorsList");
-        String userId = mFirebaseInstance.child(FirebaseAuth.getInstance().getUid()).getKey();
-        mFirebaseInstance.child(userId).setValue(doctor).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                progressBar.setVisibility(View.GONE);
-                if (DatabaseHelper.getInstance(RegisterActivity.this).addUser(doctor)) {
-                    startActivity(new Intent(RegisterActivity.this, DashBoard.class));
-                    finish();
-                } else Toast.makeText(RegisterActivity.this, "Authentication failed.",
-                        Toast.LENGTH_SHORT).show();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                progressBar.setVisibility(View.GONE);
-
-            }
-        });
-
-
-    }
 }

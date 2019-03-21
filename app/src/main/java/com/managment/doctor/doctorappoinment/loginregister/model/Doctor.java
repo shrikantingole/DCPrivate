@@ -2,12 +2,15 @@ package com.managment.doctor.doctorappoinment.loginregister.model;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 
+import java.io.Serializable;
+
 @IgnoreExtraProperties
-public class Doctor {
+public class Doctor implements Serializable {
     private int id;
     private String name;
     private String email;
     private String password;
+    private String key;
 
     public int getId() {
         return id;
@@ -57,5 +60,43 @@ public class Doctor {
 
     // drop table sql query
     public static String DROP_DOCTOR_TABLE = "DROP TABLE IF EXISTS " + TABLE_DOCTOR;
+    private int x;
+    private int y;
 
+    public void setFireBaseKey(String key) {
+        this.key = key;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    public boolean xy(int x, int y) {
+        boolean xFlag = false, yFlag = false;
+        if ((this.x + 50) > x && (this.x - 50) < x) {
+            xFlag = true;
+        }
+
+        if ((this.y + 50) > y && (this.y - 50) < y) {
+            yFlag = true;
+        }
+        if (xFlag) return yFlag;
+        return false;
+    }
 }
