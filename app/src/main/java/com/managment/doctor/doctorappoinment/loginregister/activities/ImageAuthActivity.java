@@ -70,8 +70,15 @@ public class ImageAuthActivity extends AppCompatActivity {
         if (getIntent().getExtras() != null) {
             doctor = (Doctor) getIntent().getExtras().getSerializable("Doctor");
         }
+
+        if (FirebaseAuth.getInstance().getUid() != null) {
+            chooseImg.setVisibility(View.GONE);
+            uploadImg.setVisibility(View.GONE);
+
+        }
         pd = new ProgressDialog(this);
-        pd.setMessage("Uploading....");
+        pd.setMessage("Loading....");
+        pd.setCancelable(false);
         pd.show();
         FirebaseStorage storage = FirebaseStorage.getInstance();
 //        getPassworsPoint();
@@ -84,6 +91,7 @@ public class ImageAuthActivity extends AppCompatActivity {
                     Bitmap bitmap = BitmapFactory.decodeFile(localFile.getAbsolutePath());
                     pd.dismiss();
                     imgView.setVisibility(View.VISIBLE);
+                    imgView.setImageBitmap(bitmap);
 
                 }
             }).addOnFailureListener(new OnFailureListener() {
@@ -115,9 +123,9 @@ public class ImageAuthActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     pd.dismiss();
+                    SharePref.getInstance(ImageAuthActivity.this).setSharedPreferenceString("user", "1");
                     startActivity(new Intent(getApplicationContext(), LoginActivity.class));
                     finish();
-                    Toast.makeText(ImageAuthActivity.this, "Upload successful", Toast.LENGTH_SHORT).show();
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
@@ -153,11 +161,13 @@ public class ImageAuthActivity extends AppCompatActivity {
     public boolean onImageClick(View v, MotionEvent event) {
         int x = (int) event.getX();
         int y = (int) event.getY();
-        if (!FirebaseAuth.getInstance().getUid().isEmpty()) {
-            if (doctor.xy(x, y))
-                startActivity(new Intent(getApplicationContext(), DashBoard.class));
-            SharePref.getInstance(getApplicationContext()).setSharedPreferenceString("user", "1");
-            finish();
+        if (FirebaseAuth.getInstance().getUid() != null) {
+            if (doctor.xy(x, y)) {
+                SharePref.getInstance(getApplicationContext()).setSharedPreferenceString("user", "1");
+                Intent intent = new Intent(getApplicationContext(), DashBoard.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
 //                Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -168,9 +178,6 @@ public class ImageAuthActivity extends AppCompatActivity {
 
         return false;
     }
-    @OnClick(R.id.btnReset)
-    public void onReset() {
-    }
 
     @OnClick(R.id.uploadImg)
     public void loginByMail() {
@@ -179,7 +186,7 @@ public class ImageAuthActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        Toast.makeText(getApplicationContext(), "createUserWithEmail:onComplete:" + task.isSuccessful(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "" + task.isSuccessful(), Toast.LENGTH_SHORT).show();
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.

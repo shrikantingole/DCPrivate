@@ -18,6 +18,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.managment.doctor.doctorappoinment.R;
 import com.managment.doctor.doctorappoinment.Utils;
+import com.managment.doctor.doctorappoinment.loginregister.SharePref;
 import com.managment.doctor.doctorappoinment.loginregister.activities.LoginActivity;
 import com.managment.doctor.doctorappoinment.loginregister.adapters.UpcomingEventAdapter;
 import com.managment.doctor.doctorappoinment.loginregister.model.Doctor;
@@ -156,6 +157,7 @@ public class DashBoard extends AppCompatActivity
     @OnClick(R.id.ivRight)
     public void signout() {
         FirebaseAuth.getInstance().signOut();
+        SharePref.getInstance(this).setSharedPreferenceString("user", "0");
         startActivity(new Intent(getApplicationContext(), LoginActivity.class));
         finish();
     }

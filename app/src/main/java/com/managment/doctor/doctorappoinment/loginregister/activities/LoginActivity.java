@@ -25,6 +25,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.managment.doctor.doctorappoinment.R;
 import com.managment.doctor.doctorappoinment.Utils;
 import com.managment.doctor.doctorappoinment.doc.DashBoard;
+import com.managment.doctor.doctorappoinment.loginregister.SharePref;
 import com.managment.doctor.doctorappoinment.loginregister.helpers.InputValidation;
 import com.managment.doctor.doctorappoinment.loginregister.model.Doctor;
 import com.managment.doctor.doctorappoinment.loginregister.sql.DatabaseHelper;
@@ -64,7 +65,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
         getAllDoctorList();
-        if (FirebaseAuth.getInstance().getCurrentUser()!=null) {
+        String user = SharePref.getInstance(this).getSharedPreferenceString("user", "");
+        if (FirebaseAuth.getInstance().getCurrentUser() != null && user.equalsIgnoreCase("1")) {
             startActivity(new Intent(this, DashBoard.class));
             finish();
         }
@@ -151,7 +153,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            Toast.makeText(getApplicationContext(), "Login successful!", Toast.LENGTH_LONG).show();
+//                            Toast.makeText(getApplicationContext(), "Login successful!", Toast.LENGTH_LONG).show();
                             progressBar.setVisibility(View.GONE);
 //                            Intent intent = new Intent(LoginActivity.this, DashBoard.class);
                             startActivity(new Intent(getApplicationContext(), ImageAuthActivity.class).putExtra("Doctor", doctor));
