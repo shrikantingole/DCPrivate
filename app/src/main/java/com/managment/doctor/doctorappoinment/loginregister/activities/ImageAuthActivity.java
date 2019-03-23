@@ -167,6 +167,7 @@ public class ImageAuthActivity extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), DashBoard.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
+                finish();
             }
 //                Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show();
             return false;
@@ -181,23 +182,33 @@ public class ImageAuthActivity extends AppCompatActivity {
 
     @OnClick(R.id.uploadImg)
     public void loginByMail() {
-        pd.show();
-        FirebaseAuth.getInstance().createUserWithEmailAndPassword(doctor.getEmail(), doctor.getPassword())
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Toast.makeText(getApplicationContext(), "" + task.isSuccessful(), Toast.LENGTH_SHORT).show();
-                        // If sign in fails, display a message to the user. If sign in succeeds
-                        // the auth state listener will be notified and logic to handle the
-                        // signed in user can be handled in the listener.
-                        if (!task.isSuccessful()) {
-                            Toast.makeText(getApplicationContext(), "Authentication failed." + task.getException(), Toast.LENGTH_SHORT).show();
-                            pd.dismiss();
-                        } else {
-                            createUser();
+        if (doctor != null) {
+            if (filePath == null) {
+                Toast.makeText(this, "Plz Select Image", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (doctor.getX() == 0) {
+                Toast.makeText(this, "Plz Select Image Password ", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            pd.show();
+            FirebaseAuth.getInstance().createUserWithEmailAndPassword(doctor.getEmail(), doctor.getPassword())
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            Toast.makeText(getApplicationContext(), "" + task.isSuccessful(), Toast.LENGTH_SHORT).show();
+                            // If sign in fails, display a message to the user. If sign in succeeds
+                            // the auth state listener will be notified and logic to handle the
+                            // signed in user can be handled in the listener.
+                            if (!task.isSuccessful()) {
+                                Toast.makeText(getApplicationContext(), "Authentication failed." + task.getException(), Toast.LENGTH_SHORT).show();
+                                pd.dismiss();
+                            } else {
+                                createUser();
+                            }
                         }
-                    }
-                });
+                    });
+        }
     }
 
     private void createUser() {
