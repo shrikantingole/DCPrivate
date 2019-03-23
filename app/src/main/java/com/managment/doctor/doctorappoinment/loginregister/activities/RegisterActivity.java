@@ -11,7 +11,9 @@ import android.support.v7.widget.AppCompatTextView;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.managment.doctor.doctorappoinment.R;
+import com.managment.doctor.doctorappoinment.loginregister.SharePref;
 import com.managment.doctor.doctorappoinment.loginregister.helpers.InputValidation;
 import com.managment.doctor.doctorappoinment.loginregister.model.Doctor;
 import com.managment.doctor.doctorappoinment.loginregister.sql.DatabaseHelper;
@@ -165,6 +167,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         doctor.setName(textInputEditTextName.getText().toString().trim());
         doctor.setEmail(textInputEditTextEmail.getText().toString().trim());
         doctor.setPassword(textInputEditTextPassword.getText().toString().trim());
+        FirebaseAuth.getInstance().signOut();
+        SharePref.getInstance(this).setSharedPreferenceString("user", "0");
         startActivity(new Intent(getApplicationContext(), ImageAuthActivity.class).putExtra("Doctor", doctor));
         finish();
 //        FirebaseAuth.getInstance().createUserWithEmailAndPassword(doctor.getEmail(), doctor.getPassword())
