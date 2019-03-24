@@ -6,23 +6,11 @@
     android:orientation="vertical"
     tools:context=".imageauth.ImageAuthActivity">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <Button
-            android:id="@+id/btnSelectImage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Select Image" />
-
-
-        <Button
-            android:id="@+id/btnSaveImage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Save Image" />
-    </LinearLayout>
+    <Button
+        android:id="@+id/btnSelectImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select Image" />
 
     <GridView
         android:id="@+id/simpleGridView"

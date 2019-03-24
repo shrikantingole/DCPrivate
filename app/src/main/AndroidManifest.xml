@@ -25,7 +25,8 @@
         <activity android:name=".doc.PatientListActivity" />
         <activity android:name=".doc.DashBoard" />
         <activity android:name=".doc.AddPatientActivity" />
-        <activity android:name=".imageauth.ImageAuthActivity"></activity>
+        <activity android:name=".imageauth.ImageAuthActivity" />
+        <activity android:name=".imageauth.LoginImageActivity"></activity>
     </application>
 
 </manifest>

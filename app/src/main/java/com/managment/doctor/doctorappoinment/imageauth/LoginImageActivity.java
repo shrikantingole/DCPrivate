@@ -13,8 +13,6 @@ import android.widget.GridView;
 import android.widget.Toast;
 
 import com.managment.doctor.doctorappoinment.R;
-import com.managment.doctor.doctorappoinment.loginregister.SharePref;
-import com.managment.doctor.doctorappoinment.utils.PictUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,37 +23,29 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class ImageAuthActivity extends AppCompatActivity {
-
+public class LoginImageActivity extends AppCompatActivity {
     @BindView(R.id.simpleGridView)
     GridView simpleGrid;
 
     @BindView(R.id.btnSelectImage)
     Button btnSelect;
 
-    @BindView(R.id.btnSaveImage)
-    Button btnSaveImage;
-
     Bitmap[] logos;
     int PICK_IMAGE_REQUEST = 111;
     Uri filePath;
     List<Integer> array;
     boolean login = false;
-    private Bitmap bitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_image_auth);
+        setContentView(R.layout.activity_login_image);
         ButterKnife.bind(this);
         simpleGrid = findViewById(R.id.simpleGridView); // init GridView
         if (getIntent().getExtras() != null)
             login = getIntent().getExtras().getBoolean("login");
-        bitmap = PictUtil.loadImageFromStorage(SharePref.getInstance(this).getSharedPreferenceString("path", ""));
-        if (bitmap != null) {
-            logos = splitBitmap(bitmap);
-            updateAdapter();
-        }
+
+        setView();
     }
 
     private void setView() {
@@ -75,7 +65,7 @@ public class ImageAuthActivity extends AppCompatActivity {
                 if (array.size() < 3)
                     array.add(position);
                 else
-                    Toast.makeText(ImageAuthActivity.this, "three box only", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginImageActivity.this, "three box only", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -111,7 +101,7 @@ public class ImageAuthActivity extends AppCompatActivity {
             filePath = data.getData();
             try {
                 //getting image from gallery
-                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
                 //Setting image to ImageView
                 logos = splitBitmap(bitmap);
                 updateAdapter();
@@ -119,20 +109,5 @@ public class ImageAuthActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-    }
-
-    @OnClick(R.id.btnSaveImage)
-    public void saveImage() {
-        if (bitmap == null) {
-            Toast.makeText(this, "Select Image", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (array.size() < 3) {
-            Toast.makeText(this, "Select Image Password", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        String path = PictUtil.saveToInternalStorage(bitmap, this);
-        SharePref.getInstance(this).setSharedPreferenceString("path", path);
     }
 }
