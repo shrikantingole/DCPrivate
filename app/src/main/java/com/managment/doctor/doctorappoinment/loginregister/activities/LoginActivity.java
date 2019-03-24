@@ -3,28 +3,23 @@ package com.managment.doctor.doctorappoinment.loginregister.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatTextView;
-import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.managment.doctor.doctorappoinment.R;
 import com.managment.doctor.doctorappoinment.doc.DashBoard;
-import com.managment.doctor.doctorappoinment.loginregister.SharePref;
+import com.managment.doctor.doctorappoinment.imageauth.ImageAuthActivity;
 import com.managment.doctor.doctorappoinment.loginregister.helpers.InputValidation;
-import com.managment.doctor.doctorappoinment.loginregister.model.Doctor;
 import com.managment.doctor.doctorappoinment.loginregister.sql.DatabaseHelper;
 
 import butterknife.BindView;
@@ -54,6 +49,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
+
+        Intent intent = new Intent(LoginActivity.this, ImageAuthActivity.class);
+        startActivity(intent);
+        finish();
+
+
         if (FirebaseAuth.getInstance().getCurrentUser()!=null) {
             startActivity(new Intent(this, DashBoard.class));
             finish();
@@ -153,7 +154,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         if (task.isSuccessful()) {
                             Toast.makeText(getApplicationContext(), "Login successful!", Toast.LENGTH_LONG).show();
                             progressBar.setVisibility(View.GONE);
-                            Intent intent = new Intent(LoginActivity.this, DashBoard.class);
+                            Intent intent = new Intent(LoginActivity.this, ImageAuthActivity.class);
                             startActivity(intent);
                         }
                         else {

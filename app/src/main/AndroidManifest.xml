@@ -2,7 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.managment.doctor.doctorappoinment">
-<uses-permission android:name="android.permission.INTERNET"/>
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -23,6 +25,7 @@
         <activity android:name=".doc.PatientListActivity" />
         <activity android:name=".doc.DashBoard" />
         <activity android:name=".doc.AddPatientActivity" />
+        <activity android:name=".imageauth.ImageAuthActivity"></activity>
     </application>
 
 </manifest>
