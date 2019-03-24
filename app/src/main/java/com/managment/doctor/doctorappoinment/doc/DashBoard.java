@@ -18,6 +18,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.managment.doctor.doctorappoinment.R;
 import com.managment.doctor.doctorappoinment.Utils;
+import com.managment.doctor.doctorappoinment.loginregister.SharePref;
+import com.managment.doctor.doctorappoinment.loginregister.activities.LoginActivity;
 import com.managment.doctor.doctorappoinment.loginregister.adapters.UpcomingEventAdapter;
 import com.managment.doctor.doctorappoinment.loginregister.model.Doctor;
 import com.managment.doctor.doctorappoinment.loginregister.model.Patient;
@@ -42,6 +44,9 @@ public class DashBoard extends AppCompatActivity
     @BindView(R.id.ivBack)
     ImageView ivBack;
 
+    @BindView(R.id.ivRight)
+    ImageView ivRight;
+
     @BindView(R.id.tvTitle)
     TextView tvTitle;
 
@@ -59,6 +64,7 @@ public class DashBoard extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dash_board);
         ButterKnife.bind(this);
+        ivRight.setImageDrawable(getResources().getDrawable(R.drawable.ic_reuse));
         tvTitle.setText("DashBoard");
         ivBack.setVisibility(View.GONE);
         initObjects();
@@ -80,7 +86,6 @@ public class DashBoard extends AppCompatActivity
         });
 
     }
-
 
     @OnClick(R.id.cvAddPatient)
     public void cvAddPatient()
@@ -148,4 +153,13 @@ public class DashBoard extends AppCompatActivity
         });
     }
 
+    @OnClick(R.id.ivRight)
+    public void signout() {
+        FirebaseAuth.getInstance().signOut();
+        SharePref.getInstance(getApplicationContext()).setSharedPreferenceString("pass", "");
+//        String path = PictUtil.saveToInternalStorage(bitmap, getApplicationContext());
+        SharePref.getInstance(getApplicationContext()).setSharedPreferenceString("path", "");
+        startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+        finish();
+    }
 }

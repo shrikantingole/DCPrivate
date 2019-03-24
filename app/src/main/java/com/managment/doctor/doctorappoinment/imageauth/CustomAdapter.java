@@ -10,20 +10,28 @@ import android.widget.ImageView;
 
 import com.managment.doctor.doctorappoinment.R;
 
+import java.util.ArrayList;
+
+interface OnClickListner {
+    void onItemClick(int pos, Bitmap b);
+}
+
 public class CustomAdapter extends BaseAdapter {
     Context context;
-    Bitmap logos[];
+    ArrayList<Bitmap> logos;
     LayoutInflater inflter;
+    OnClickListner listner;
 
-    public CustomAdapter(Context applicationContext, Bitmap logos[]) {
+    public CustomAdapter(Context applicationContext, ArrayList<Bitmap> logos, OnClickListner listner) {
         this.context = applicationContext;
         this.logos = logos;
         inflter = (LayoutInflater.from(applicationContext));
+        this.listner = listner;
     }
 
     @Override
     public int getCount() {
-        return logos.length;
+        return logos.size();
     }
 
     @Override
@@ -37,10 +45,18 @@ public class CustomAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int i, View view, ViewGroup viewGroup) {
+    public View getView(final int i, View view, ViewGroup viewGroup) {
         view = inflter.inflate(R.layout.item_gride_view, null); // inflate the layout
         ImageView icon = view.findViewById(R.id.icon); // get the reference of ImageView
-        icon.setImageBitmap(logos[i]); // set logo images
+        icon.setImageBitmap(logos.get(i)); // set logo images
+        icon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listner != null)
+                    listner.onItemClick(i, logos.get(i));
+            }
+        });
         return view;
     }
+
 }

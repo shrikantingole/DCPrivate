@@ -6,12 +6,6 @@
     android:orientation="vertical"
     tools:context=".imageauth.ImageAuthActivity">
 
-    <Button
-        android:id="@+id/btnSelectImage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Select Image" />
-
     <GridView
         android:id="@+id/simpleGridView"
         android:layout_width="fill_parent"
@@ -20,5 +14,12 @@
         android:listSelector="#0f0"
         android:numColumns="3" />
 
+
+    <Button
+        android:id="@+id/btnImageLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Login"
+        android:visibility="gone" />
 
 </LinearLayout>

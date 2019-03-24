@@ -3,22 +3,22 @@ package com.managment.doctor.doctorappoinment.imageauth;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.managment.doctor.doctorappoinment.R;
+import com.managment.doctor.doctorappoinment.doc.DashBoard;
 import com.managment.doctor.doctorappoinment.loginregister.SharePref;
 import com.managment.doctor.doctorappoinment.utils.PictUtil;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -29,14 +29,18 @@ public class ImageAuthActivity extends AppCompatActivity {
 
     @BindView(R.id.simpleGridView)
     GridView simpleGrid;
+    String password = "";
 
     @BindView(R.id.btnSelectImage)
     Button btnSelect;
 
+    @BindView(R.id.progressbar)
+    ProgressBar progressbar;
+
     @BindView(R.id.btnSaveImage)
     Button btnSaveImage;
 
-    Bitmap[] logos;
+    ArrayList<Bitmap> logos;
     int PICK_IMAGE_REQUEST = 111;
     Uri filePath;
     List<Integer> array;
@@ -58,40 +62,35 @@ public class ImageAuthActivity extends AppCompatActivity {
         }
     }
 
-    private void setView() {
-        if (!login)
-            btnSelect.setVisibility(View.GONE);
-    }
 
     private void updateAdapter() {
-        List<Bitmap> names = Arrays.asList(logos);
-        Collections.shuffle(names);
+//        List<Bitmap> names=logos;
+//        Collections.shuffle(names);
         array = new ArrayList<>();
-        CustomAdapter customAdapter = new CustomAdapter(getApplicationContext(), logos);
-        simpleGrid.setAdapter(customAdapter);
-        simpleGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        CustomAdapter customAdapter = new CustomAdapter(getApplicationContext(), logos, new OnClickListner() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(int pos, Bitmap b) {
                 if (array.size() < 3)
-                    array.add(position);
+                    array.add(pos);
                 else
                     Toast.makeText(ImageAuthActivity.this, "three box only", Toast.LENGTH_SHORT).show();
             }
         });
+        simpleGrid.setAdapter(customAdapter);
     }
 
-    public Bitmap[] splitBitmap(Bitmap picture) {
+    public ArrayList<Bitmap> splitBitmap(Bitmap picture) {
         Bitmap scaledBitmap = Bitmap.createScaledBitmap(picture, 240, 240, true);
-        Bitmap[] imgs = new Bitmap[9];
-        imgs[0] = Bitmap.createBitmap(scaledBitmap, 0, 0, 80, 80);
-        imgs[1] = Bitmap.createBitmap(scaledBitmap, 80, 0, 80, 80);
-        imgs[2] = Bitmap.createBitmap(scaledBitmap, 160, 0, 80, 80);
-        imgs[3] = Bitmap.createBitmap(scaledBitmap, 0, 80, 80, 80);
-        imgs[4] = Bitmap.createBitmap(scaledBitmap, 80, 80, 80, 80);
-        imgs[5] = Bitmap.createBitmap(scaledBitmap, 160, 80, 80, 80);
-        imgs[6] = Bitmap.createBitmap(scaledBitmap, 0, 160, 80, 80);
-        imgs[7] = Bitmap.createBitmap(scaledBitmap, 80, 160, 80, 80);
-        imgs[8] = Bitmap.createBitmap(scaledBitmap, 160, 160, 80, 80);
+        ArrayList<Bitmap> imgs = new ArrayList<>();
+        imgs.add(0, Bitmap.createBitmap(scaledBitmap, 0, 0, 80, 80));
+        imgs.add(1, Bitmap.createBitmap(scaledBitmap, 80, 0, 80, 80));
+        imgs.add(2, Bitmap.createBitmap(scaledBitmap, 160, 0, 80, 80));
+        imgs.add(3, Bitmap.createBitmap(scaledBitmap, 0, 80, 80, 80));
+        imgs.add(4, Bitmap.createBitmap(scaledBitmap, 80, 80, 80, 80));
+        imgs.add(5, Bitmap.createBitmap(scaledBitmap, 160, 80, 80, 80));
+        imgs.add(6, Bitmap.createBitmap(scaledBitmap, 0, 160, 80, 80));
+        imgs.add(7, Bitmap.createBitmap(scaledBitmap, 80, 160, 80, 80));
+        imgs.add(8, Bitmap.createBitmap(scaledBitmap, 160, 160, 80, 80));
         return imgs;
     }
 
@@ -131,8 +130,33 @@ public class ImageAuthActivity extends AppCompatActivity {
             Toast.makeText(this, "Select Image Password", Toast.LENGTH_SHORT).show();
             return;
         }
+        for (Integer a : array)
+            password = password + "," + a;
+        new LongOperation().execute();
 
-        String path = PictUtil.saveToInternalStorage(bitmap, this);
-        SharePref.getInstance(this).setSharedPreferenceString("path", path);
+    }
+
+    private class LongOperation extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            SharePref.getInstance(getApplicationContext()).setSharedPreferenceString("pass", password);
+            String path = PictUtil.saveToInternalStorage(bitmap, getApplicationContext());
+            SharePref.getInstance(getApplicationContext()).setSharedPreferenceString("path", path);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            progressbar.setVisibility(View.GONE);
+            Toast.makeText(ImageAuthActivity.this, "Success", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(getApplicationContext(), DashBoard.class));
+            finish();
+        }
+
+        @Override
+        protected void onPreExecute() {
+            progressbar.setVisibility(View.VISIBLE);
+        }
+
     }
 }

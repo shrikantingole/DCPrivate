@@ -17,8 +17,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.managment.doctor.doctorappoinment.R;
-import com.managment.doctor.doctorappoinment.doc.DashBoard;
 import com.managment.doctor.doctorappoinment.imageauth.ImageAuthActivity;
+import com.managment.doctor.doctorappoinment.imageauth.LoginImageActivity;
+import com.managment.doctor.doctorappoinment.loginregister.SharePref;
 import com.managment.doctor.doctorappoinment.loginregister.helpers.InputValidation;
 import com.managment.doctor.doctorappoinment.loginregister.sql.DatabaseHelper;
 
@@ -50,19 +51,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
 
-        Intent intent = new Intent(LoginActivity.this, ImageAuthActivity.class);
-        startActivity(intent);
-        finish();
-
-
-        if (FirebaseAuth.getInstance().getCurrentUser()!=null) {
-            startActivity(new Intent(this, DashBoard.class));
+        String path = SharePref.getInstance(this).getSharedPreferenceString("path", "");
+        if (FirebaseAuth.getInstance().getCurrentUser() != null && !path.isEmpty()) {
+            startActivity(new Intent(this, LoginImageActivity.class));
+            finish();
+        } else if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            startActivity(new Intent(this, ImageAuthActivity.class));
             finish();
         }
-//        if (!SharePref.getInstance(this).getSharedPreferenceString("email","").isEmpty()) {
-//            startActivity(new Intent(this, DashBoard.class));
-//            finish();
-//        }
         initViews();
         initListeners();
         initObjects();
@@ -126,21 +122,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
 
         loginByMail(textInputEditTextEmail.getText().toString().trim(), textInputEditTextPassword.getText().toString().trim());
-//        if (databaseHelper.checkUser(textInputEditTextEmail.getText().toString().trim(), textInputEditTextPassword.getText().toString().trim())) {
-//
-//
-//            SharePref.getInstance(this).setSharedPreferenceString("email",textInputEditTextEmail.getText().toString().trim());
-//
-//            Intent accountsIntent = new Intent(activity, DashBoard.class);
-//            emptyInputEditText();
-//            startActivity(accountsIntent);
-//            finish();
-//
-//
-//        } else {
-//            // Snack Bar to show success message that record is wrong
-//            Toast.makeText(activity, getString(R.string.error_valid_email_password), Toast.LENGTH_SHORT).show();
-//        }
     }
 
     private void loginByMail(final String email, final String password)
@@ -152,10 +133,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            Toast.makeText(getApplicationContext(), "Login successful!", Toast.LENGTH_LONG).show();
                             progressBar.setVisibility(View.GONE);
-                            Intent intent = new Intent(LoginActivity.this, ImageAuthActivity.class);
-                            startActivity(intent);
+                            if (SharePref.getInstance(getApplicationContext()).getSharedPreferenceString("path", "").isEmpty()) {
+                                Intent intent = new Intent(LoginActivity.this, ImageAuthActivity.class);
+                                startActivity(intent);
+                            } else {
+                                Intent intent = new Intent(LoginActivity.this, LoginImageActivity.class);
+                                startActivity(intent);
+                            }
                         }
                         else {
                             Toast.makeText(getApplicationContext(), "Login failed! Please try again later", Toast.LENGTH_LONG).show();

@@ -1,6 +1,5 @@
 package com.managment.doctor.doctorappoinment.utils;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.graphics.Bitmap;
@@ -13,7 +12,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class PictUtil {
-    public static String saveToInternalStorage(Bitmap bitmapImage, Activity context) {
+    public static String saveToInternalStorage(Bitmap bitmapImage, Context context) {
         ContextWrapper cw = new ContextWrapper(context.getApplicationContext());
         // path to /data/data/yourapp/app_data/imageDir
         File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);

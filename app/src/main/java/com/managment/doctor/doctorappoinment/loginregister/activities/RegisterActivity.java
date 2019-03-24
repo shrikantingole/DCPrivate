@@ -22,7 +22,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.managment.doctor.doctorappoinment.R;
-import com.managment.doctor.doctorappoinment.doc.DashBoard;
+import com.managment.doctor.doctorappoinment.imageauth.ImageAuthActivity;
 import com.managment.doctor.doctorappoinment.loginregister.helpers.InputValidation;
 import com.managment.doctor.doctorappoinment.loginregister.model.Doctor;
 import com.managment.doctor.doctorappoinment.loginregister.sql.DatabaseHelper;
@@ -204,7 +204,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             public void onSuccess(Void aVoid) {
                 progressBar.setVisibility(View.GONE);
                 if (DatabaseHelper.getInstance(RegisterActivity.this).addUser(doctor)) {
-                    startActivity(new Intent(RegisterActivity.this, DashBoard.class));
+                    startActivity(new Intent(RegisterActivity.this, ImageAuthActivity.class));
                     finish();
                 } else Toast.makeText(RegisterActivity.this, "Authentication failed.",
                         Toast.LENGTH_SHORT).show();

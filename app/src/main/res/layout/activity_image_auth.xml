@@ -1,36 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".imageauth.ImageAuthActivity">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".imageauth.ImageAuthActivity">
 
-        <Button
-            android:id="@+id/btnSelectImage"
-            android:layout_width="wrap_content"
+        <TextView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Select Image" />
+            android:layout_margin="10dp"
+            android:text="Set Your Image Password "
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
-
-        <Button
-            android:id="@+id/btnSaveImage"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Save Image" />
+            android:layout_margin="10dp">
+
+            <Button
+                android:id="@+id/btnSelectImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Select Image" />
+
+
+            <Button
+                android:id="@+id/btnSaveImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Save Image" />
+        </LinearLayout>
+
+        <GridView
+            android:id="@+id/simpleGridView"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:columnWidth="80dp"
+            android:listSelector="#0f0"
+            android:numColumns="3" />
+
     </LinearLayout>
 
-    <GridView
-        android:id="@+id/simpleGridView"
-        android:layout_width="fill_parent"
+
+    <ProgressBar
+        android:id="@+id/progressbar"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:columnWidth="80dp"
-        android:listSelector="#0f0"
-        android:numColumns="3" />
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
 
 
-</LinearLayout>
+</RelativeLayout>
