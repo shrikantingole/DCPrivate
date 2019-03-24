@@ -137,9 +137,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             if (SharePref.getInstance(getApplicationContext()).getSharedPreferenceString("path", "").isEmpty()) {
                                 Intent intent = new Intent(LoginActivity.this, ImageAuthActivity.class);
                                 startActivity(intent);
+                                finish();
                             } else {
                                 Intent intent = new Intent(LoginActivity.this, LoginImageActivity.class);
                                 startActivity(intent);
+                                finish();
                             }
                         }
                         else {
