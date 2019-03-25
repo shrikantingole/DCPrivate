@@ -99,9 +99,16 @@ public class DashBoard extends AppCompatActivity
         startActivity(new Intent(this,PatientListActivity.class));
 
     }
-    @OnClick(R.id.cvProfile)
-    public void profile()
+
+    @OnClick(R.id.cvAddRecpt)
+    public void addRecpt()
     {
+        startActivity(new Intent(this, AddCompActivity.class));
+
+    }
+
+    @OnClick(R.id.cvViewRecpt)
+    public void viewRecpt() {
 
     }
 
