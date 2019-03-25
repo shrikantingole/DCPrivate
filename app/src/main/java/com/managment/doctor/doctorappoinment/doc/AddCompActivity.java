@@ -173,9 +173,12 @@ public class AddCompActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void createDoctorList() {
+        String email = recpt.getEmail();
+        email = email.replace("@", "and");
+        email = email.replace(".", "dot");
         DatabaseReference mFirebaseInstance = FirebaseDatabase.getInstance().getReference("DoctorRecptList");
         String userId = mFirebaseInstance.child(FirebaseAuth.getInstance().getUid()).getKey();
-        mFirebaseInstance.child(userId).setValue(recpt).addOnSuccessListener(new OnSuccessListener<Void>() {
+        mFirebaseInstance.child(userId).child(email).setValue(recpt).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 progressBar.setVisibility(View.GONE);

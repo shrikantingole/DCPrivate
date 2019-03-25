@@ -16,6 +16,7 @@ public class Utils
 {
     public static final String DOCTORKEY="DoctorsList";
     public static final String PATIENTKEY="PatientsList";
+    public static final String RECPTEY = "DoctorRecptList";
     public static String getTodayDate()
     {
         Calendar cal = Calendar.getInstance();

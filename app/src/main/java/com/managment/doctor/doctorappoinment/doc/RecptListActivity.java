@@ -22,7 +22,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.managment.doctor.doctorappoinment.R;
 import com.managment.doctor.doctorappoinment.Utils;
 import com.managment.doctor.doctorappoinment.loginregister.adapters.RecptRecyclerAdapter;
-import com.managment.doctor.doctorappoinment.loginregister.model.Patient;
+import com.managment.doctor.doctorappoinment.loginregister.model.Recpt;
 
 import java.util.ArrayList;
 
@@ -31,6 +31,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static com.managment.doctor.doctorappoinment.Utils.PATIENTKEY;
+import static com.managment.doctor.doctorappoinment.Utils.RECPTEY;
 
 public class RecptListActivity extends AppCompatActivity {
 
@@ -42,7 +43,7 @@ public class RecptListActivity extends AppCompatActivity {
     ProgressBar progressBar;
     private AppCompatActivity activity = RecptListActivity.this;
     private RecyclerView recyclerViewUsers;
-    private ArrayList<Patient> patients = new ArrayList<>();
+    private ArrayList<Recpt> arrayList = new ArrayList<>();
     private RecptRecyclerAdapter adapter;
 
     @Override
@@ -52,7 +53,7 @@ public class RecptListActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         ivRefresh.setImageDrawable(getResources().getDrawable(R.drawable.ic_reuse));
         progressBar.setVisibility(View.VISIBLE);
-        tvTitle.setText("View Patient");
+        tvTitle.setText("View Receptionist");
         initViews();
         initObjects();
         getAllPatientList();
@@ -71,20 +72,20 @@ public class RecptListActivity extends AppCompatActivity {
     }
 
     private void initObjects() {
-        patients = new ArrayList<>();
-//        patients.addAll(DatabaseHelper.getInstance(PatientListActivity.this).getAllPatient(getApplicationContext()));
-        adapter = new RecptRecyclerAdapter(patients,
+        arrayList = new ArrayList<>();
+//        arrayList.addAll(DatabaseHelper.getInstance(PatientListActivity.this).getAllPatient(getApplicationContext()));
+        adapter = new RecptRecyclerAdapter(arrayList,
                 new RecptRecyclerAdapter.OnItemClickListner() {
                     @Override
                     public void onClick(int position) {
-                        Toast.makeText(activity, "" + patients.get(position).getName(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, "" + arrayList.get(position).getName(), Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
                     public void onDelete(int adapterPosition) {
-//                        DatabaseHelper.getInstance(PatientListActivity.this).deletePatient(patients.get(adapterPosition));
+//                        DatabaseHelper.getInstance(PatientListActivity.this).deletePatient(arrayList.get(adapterPosition));
                         FirebaseDatabase.getInstance().getReference(PATIENTKEY).child(FirebaseAuth.getInstance().getUid())
-                                .child(patients.get(adapterPosition).getKey()).removeValue();
+                                .child(arrayList.get(adapterPosition).getKey()).removeValue();
                         Toast.makeText(activity, "Deleted", Toast.LENGTH_SHORT).show();
                         getAllPatientList();
                     }
@@ -114,16 +115,16 @@ public class RecptListActivity extends AppCompatActivity {
     private void getAllPatientList() {
         progressBar.setVisibility(View.VISIBLE);
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl(Utils.url);
-        databaseReference.child(PATIENTKEY).child(FirebaseAuth.getInstance().getUid())
+        databaseReference.child(RECPTEY).child(FirebaseAuth.getInstance().getUid())
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         Log.d("Count ", "" + dataSnapshot.getChildrenCount());
-                        patients.clear();
+                        arrayList.clear();
                         for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                            Patient post = postSnapshot.getValue(Patient.class);
+                            Recpt post = postSnapshot.getValue(Recpt.class);
                             post.setFireBaseKey(postSnapshot.getKey());
-                            patients.add(post);
+                            arrayList.add(post);
                         }
                         update();
                     }
@@ -137,7 +138,7 @@ public class RecptListActivity extends AppCompatActivity {
 
     @OnClick(R.id.ivRight)
     public void onRefresh() {
-        patients.clear();
+        arrayList.clear();
         getAllPatientList();
         progressBar.setVisibility(View.VISIBLE);
 

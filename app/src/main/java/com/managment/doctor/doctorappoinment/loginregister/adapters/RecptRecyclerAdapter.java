@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.managment.doctor.doctorappoinment.R;
-import com.managment.doctor.doctorappoinment.loginregister.model.Patient;
+import com.managment.doctor.doctorappoinment.loginregister.model.Recpt;
 
 import java.util.ArrayList;
 
@@ -18,11 +18,11 @@ import butterknife.OnClick;
 
 public class RecptRecyclerAdapter extends RecyclerView.Adapter<RecptRecyclerAdapter.PatientViewHolder> {
 
-    private ArrayList<Patient> patientList;
+    private ArrayList<Recpt> arrayList;
     private OnItemClickListner callback;
 
-    public RecptRecyclerAdapter(ArrayList<Patient> listDoctors, OnItemClickListner callback) {
-        this.patientList = listDoctors;
+    public RecptRecyclerAdapter(ArrayList<Recpt> listDoctors, OnItemClickListner callback) {
+        this.arrayList = listDoctors;
         this.callback = callback;
     }
 
@@ -30,26 +30,21 @@ public class RecptRecyclerAdapter extends RecyclerView.Adapter<RecptRecyclerAdap
     public PatientViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // inflating recycler item view
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_patient_recycler, parent, false);
+                .inflate(R.layout.item_recpt_recycler, parent, false);
 
         return new PatientViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(PatientViewHolder holder, int position) {
-        holder.textViewName.setText(patientList.get(position).getName());
-        holder.tvcity.setText(patientList.get(position).getCity());
-        holder.tvEmail.setText(patientList.get(position).getEmail());
-        holder.tvappdate.setText(patientList.get(position).getOppDate());
-        holder.tvcontact.setText(patientList.get(position).getContact());
-        holder.tvgender.setText(patientList.get(position).getGender());
-        holder.tvillness.setText(patientList.get(position).getIllness());
-        holder.tvregdate.setText(patientList.get(position).getRegDate());
+        holder.textViewName.setText(arrayList.get(position).getName());
+        holder.tvEmail.setText(arrayList.get(position).getEmail());
+        holder.tvcontact.setText(arrayList.get(position).getContact());
     }
 
     @Override
     public int getItemCount() {
-        return patientList.size();
+        return arrayList.size();
     }
 
 
@@ -69,26 +64,11 @@ public class RecptRecyclerAdapter extends RecyclerView.Adapter<RecptRecyclerAdap
         @BindView(R.id.tvname)
         TextView textViewName;
 
-        @BindView(R.id.tvcity)
-        TextView tvcity;
-
         @BindView(R.id.tvemail)
         TextView tvEmail;
 
-        @BindView(R.id.tvgender)
-        TextView tvgender;
-
-        @BindView(R.id.tvappdate)
-        TextView tvappdate;
-
         @BindView(R.id.tvcontact)
         TextView tvcontact;
-
-        @BindView(R.id.tvillness)
-        TextView tvillness;
-
-        @BindView(R.id.tvregdate)
-        TextView tvregdate;
 
         public PatientViewHolder(View view) {
             super(view);

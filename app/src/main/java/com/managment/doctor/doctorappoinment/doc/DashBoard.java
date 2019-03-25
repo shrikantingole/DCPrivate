@@ -109,6 +109,7 @@ public class DashBoard extends AppCompatActivity
 
     @OnClick(R.id.cvViewRecpt)
     public void viewRecpt() {
+        startActivity(new Intent(this, RecptListActivity.class));
 
     }
 
