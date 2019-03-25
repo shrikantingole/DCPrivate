@@ -24,6 +24,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.managment.doctor.doctorappoinment.R;
 import com.managment.doctor.doctorappoinment.Utils;
+import com.managment.doctor.doctorappoinment.loginregister.SharePref;
 import com.managment.doctor.doctorappoinment.loginregister.model.Patient;
 import com.managment.doctor.doctorappoinment.loginregister.sql.DatabaseHelper;
 
@@ -34,6 +35,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static com.managment.doctor.doctorappoinment.Utils.PATIENTKEY;
+import static com.managment.doctor.doctorappoinment.Utils.recptDocKey;
 
 public class AddPatientActivity extends AppCompatActivity {
 
@@ -77,6 +79,7 @@ public class AddPatientActivity extends AppCompatActivity {
     private Patient d;
     private String doctorName;
     private DatabaseReference mFirebaseInstance;
+    private String key;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -194,9 +197,11 @@ public class AddPatientActivity extends AppCompatActivity {
 
     private void performPatientDetails(boolean update) {
         if (FirebaseAuth.getInstance() == null || FirebaseAuth.getInstance().getUid() == null)
-            return;
+            key = SharePref.getInstance(getApplicationContext()).getSharedPreferenceString(recptDocKey, "");
+        else key = FirebaseAuth.getInstance().getUid();
+
         mFirebaseInstance = FirebaseDatabase.getInstance().getReference(PATIENTKEY)
-                .child(FirebaseAuth.getInstance().getUid());
+                .child(key);
         String userId = "";
         if (!update) {
             userId = mFirebaseInstance.push().getKey();

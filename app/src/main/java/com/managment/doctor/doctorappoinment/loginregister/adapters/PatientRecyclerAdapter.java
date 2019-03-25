@@ -1,32 +1,37 @@
 package com.managment.doctor.doctorappoinment.loginregister.adapters;
 
-import android.support.v7.widget.AppCompatTextView;
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.managment.doctor.doctorappoinment.R;
-import com.managment.doctor.doctorappoinment.loginregister.model.Doctor;
+import com.managment.doctor.doctorappoinment.loginregister.SharePref;
 import com.managment.doctor.doctorappoinment.loginregister.model.Patient;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.managment.doctor.doctorappoinment.Utils.recptDocKey;
+
 
 public class PatientRecyclerAdapter extends RecyclerView.Adapter<PatientRecyclerAdapter.PatientViewHolder> {
 
+    private final String key;
     private ArrayList<Patient> patientList;
     private OnItemClickListner callback;
-    public PatientRecyclerAdapter(ArrayList<Patient> listDoctors,OnItemClickListner callback ) {
+
+    public PatientRecyclerAdapter(ArrayList<Patient> listDoctors, OnItemClickListner callback, Context context) {
         this.patientList = listDoctors;
         this.callback=callback;
+        key = SharePref.getInstance(context).getSharedPreferenceString(recptDocKey, "");
+
     }
 
     @Override
@@ -48,6 +53,8 @@ public class PatientRecyclerAdapter extends RecyclerView.Adapter<PatientRecycler
         holder.tvgender.setText(patientList.get(position).getGender());
         holder.tvillness.setText(patientList.get(position).getIllness());
         holder.tvregdate.setText(patientList.get(position).getRegDate());
+        if (!key.isEmpty())
+            holder.ivDelete.setVisibility(View.GONE);
     }
 
     @Override
@@ -84,6 +91,9 @@ public class PatientRecyclerAdapter extends RecyclerView.Adapter<PatientRecycler
 
         @BindView(R.id.tvregdate)
         TextView tvregdate;
+
+        @BindView(R.id.ivDelete)
+        ImageView ivDelete;
 
         public PatientViewHolder(View view) {
             super(view);

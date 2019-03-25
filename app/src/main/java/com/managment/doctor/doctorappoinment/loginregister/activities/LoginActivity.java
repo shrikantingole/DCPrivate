@@ -8,23 +8,39 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatTextView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.managment.doctor.doctorappoinment.R;
+import com.managment.doctor.doctorappoinment.Utils;
 import com.managment.doctor.doctorappoinment.imageauth.ImageAuthActivity;
 import com.managment.doctor.doctorappoinment.imageauth.LoginImageActivity;
 import com.managment.doctor.doctorappoinment.loginregister.SharePref;
 import com.managment.doctor.doctorappoinment.loginregister.helpers.InputValidation;
+import com.managment.doctor.doctorappoinment.loginregister.model.Recpt;
 import com.managment.doctor.doctorappoinment.loginregister.sql.DatabaseHelper;
+import com.managment.doctor.doctorappoinment.recpt.RecptDashboard;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.managment.doctor.doctorappoinment.Utils.RECPTLOGINKEY;
+import static com.managment.doctor.doctorappoinment.Utils.recptContact;
+import static com.managment.doctor.doctorappoinment.Utils.recptDocKey;
+import static com.managment.doctor.doctorappoinment.Utils.recptMail;
+import static com.managment.doctor.doctorappoinment.Utils.recptName;
 
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
@@ -45,6 +61,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     @BindView(R.id.progressbar)
     ProgressBar progressBar;
+
+    @BindView(R.id.isRecpt)
+    Switch isRecpt;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -121,7 +141,48 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             return;
         }
 
-        loginByMail(textInputEditTextEmail.getText().toString().trim(), textInputEditTextPassword.getText().toString().trim());
+        if (isRecpt.isChecked())
+            loginRecpt();
+        else
+            loginByMail(textInputEditTextEmail.getText().toString().trim(), textInputEditTextPassword.getText().toString().trim());
+    }
+
+    private void loginRecpt() {
+        progressBar.setVisibility(View.VISIBLE);
+        String email = textInputEditTextEmail.getText().toString().trim();
+        email = email.replace("@", "and");
+        email = email.replace(".", "dot");
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl(Utils.url);
+        databaseReference.child(RECPTLOGINKEY).child(email)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Log.d("Count ", "" + dataSnapshot.getChildrenCount());
+                        Recpt post = dataSnapshot.getValue(Recpt.class);
+
+                        if (post == null) {
+                            Toast.makeText(activity, "Wrong Username and Password", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        if (post.getPassword().equalsIgnoreCase(textInputEditTextPassword.getText().toString().trim())) {
+                            SharePref.getInstance(getApplicationContext()).setSharedPreferenceString(recptName, post.getName());
+                            SharePref.getInstance(getApplicationContext()).setSharedPreferenceString(recptDocKey, post.getDoctor());
+                            SharePref.getInstance(getApplicationContext()).setSharedPreferenceString(recptMail, post.getEmail());
+                            SharePref.getInstance(getApplicationContext()).setSharedPreferenceString(recptContact, post.getContact());
+
+                            Intent intent = new Intent(LoginActivity.this, RecptDashboard.class);
+                            startActivity(intent);
+                            finish();
+                        }
+                        progressBar.setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        progressBar.setVisibility(View.GONE);
+                    }
+                });
     }
 
     private void loginByMail(final String email, final String password)

@@ -1,4 +1,4 @@
-package com.managment.doctor.doctorappoinment.doc;
+package com.managment.doctor.doctorappoinment.recpt;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;

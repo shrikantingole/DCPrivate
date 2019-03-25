@@ -28,7 +28,8 @@
         <activity android:name=".imageauth.ImageAuthActivity" />
         <activity android:name=".imageauth.LoginImageActivity" />
         <activity android:name=".doc.AddCompActivity" />
-        <activity android:name=".doc.RecptListActivity"></activity>
+        <activity android:name=".doc.RecptListActivity" />
+        <activity android:name=".recpt.RecptDashboard"></activity>
     </application>
 
 </manifest>

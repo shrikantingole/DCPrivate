@@ -15,8 +15,16 @@ import java.util.Date;
 public class Utils
 {
     public static final String DOCTORKEY="DoctorsList";
+    public static final String RECPTLOGINKEY = "RecptListActivity";
     public static final String PATIENTKEY="PatientsList";
     public static final String RECPTEY = "DoctorRecptList";
+
+    public static final String recptName = "Rname";
+    public static final String recptMail = "Rmail";
+    public static final String recptContact = "RContact";
+    public static final String recptDocKey = "RDocKey";
+
+
     public static String getTodayDate()
     {
         Calendar cal = Calendar.getInstance();

@@ -8,9 +8,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.GridView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.managment.doctor.doctorappoinment.R;
 import com.managment.doctor.doctorappoinment.doc.DashBoard;
 import com.managment.doctor.doctorappoinment.loginregister.SharePref;
+import com.managment.doctor.doctorappoinment.loginregister.activities.LoginActivity;
 import com.managment.doctor.doctorappoinment.utils.PictUtil;
 
 import java.util.ArrayList;
@@ -99,13 +101,20 @@ public class LoginImageActivity extends AppCompatActivity {
         return imgs;
     }
 
-    @OnClick(R.id.btnImageLogin)
-    public void onValidateEmail() {
-        if (array.size() < 3) {
-            Toast.makeText(this, "Select box Image", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-
+    //    @OnClick(R.id.btnImageLogin)
+//    public void onValidateEmail() {
+//        if (array.size() < 3) {
+//            Toast.makeText(this, "Select box Image", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
+//
+//
+//    }
+    @OnClick(R.id.btnSignout)
+    public void signout() {
+        FirebaseAuth.getInstance().signOut();
+        SharePref.getInstance(getApplicationContext()).clearData();
+        startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+        finish();
     }
 }

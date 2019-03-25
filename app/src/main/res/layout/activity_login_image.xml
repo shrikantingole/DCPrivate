@@ -16,10 +16,10 @@
 
 
     <Button
-        android:id="@+id/btnImageLogin"
+        android:id="@+id/btnSignout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Login"
-        android:visibility="gone" />
+        android:text="Signout"
+        android:visibility="visible" />
 
 </LinearLayout>
